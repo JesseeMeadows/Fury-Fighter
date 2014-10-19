@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<project name="furyfighter" default="run" basedir=".">
+	<!-- global properties -->
+	<property name="assets" location="assets/"/>
+	<property name="snd" location="${assets}/snd/"/>
+	<property name="lib" location="lib/"/>
+	<property name="src" location="src/"/>
+	<property name="build" location="build/"/>
+	<property name="jar" location="${build}/jar"/>
+	
+	<path id="classpath">
+        <fileset dir="${lib}" includes="*.jar"/>
+    </path>
+	
+	<path id="buildpath">
+        <fileset dir="${build}" includes="*.class"/>
+    </path>
+	
+	<target name="build">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}">
+			<classpath>
+				<pathelement location="${lib}"/>
+				<fileset dir="${lib}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="run" depends="build">
+	</target>
+	
+	<target name="cleanbuild">
+		<delete dir="${build}"/>
+		<tstamp/>
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}">
+			<classpath>
+				<pathelement location="${lib}"/>
+				<fileset dir="${lib}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+	
+</project>
