@@ -32,7 +32,7 @@
     </target>
 
     <target name="run.java" depends="jar.java">
-    	<java jar="${target.jar.dir}/furyfighter.jar" fork="true">
+    	<java jar="${target.jar.dir}/furyfighter.jar" fork="true" dir="${target.jar.dir}">
     		<classpath>
                 <path refid="classpath_lib"/>
             </classpath>
