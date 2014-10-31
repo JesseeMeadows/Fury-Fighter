@@ -1,28 +1,39 @@
+public class ModelController {
+	private ViewController viewController;
+	private Model mainModel;
 
+/**
+ * This class is a lot like the ViewController class, in being that it's basically a wrapper.
+ * It's only function is to hold the current model that's in use and call that model's 
+ * functions/methods through polymorphism
+ * 
+ * Functions:
+ * 1) Hold active model(typically levelModel, but the splash screen and title models are other options)
+ * 2) Give active model ability to set a different active model and viewController(associated with that given model)
+ */
+	ModelController() {
+		mainModel = null;
+	}
 
-public class ModelController{
-    private ViewController viewController;
-    private Model mainModel;
+	public void update(float dt) {
+		if (mainModel != null)
+			mainModel.update(dt);
+		// System.out.println(1000/dt); // FPS
+	}
 
-    ModelController(){
-	this.mainModel = null;
-    }
+	public void setMainModel(Model m) {
+		mainModel = m;
+	}
 
-    public void update(float dt){
-        if(this.mainModel != null)
-	    this.mainModel.update(dt);
-	//System.out.println(1000/dt); // FPS
-    }
-    public void setMainModel(Model m){
-	this.mainModel = m;
-    }
-    public Model getMainModel(){
-	return this.mainModel;
-    }
-    public void setViewController(ViewController v){
-	this.viewController = v;
-    }
-    public ViewController getViewController(){
-	return this.viewController;
-    }
+	public Model getMainModel() {
+		return mainModel;
+	}
+
+	public void setViewController(ViewController v) {
+		viewController = v;
+	}
+
+	public ViewController getViewController() {
+		return viewController;
+	}
 }

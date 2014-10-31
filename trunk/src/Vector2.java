@@ -1,8 +1,8 @@
 
 public class Vector2{
 
-	private double x;
-	private double y;
+	private double x;         // x-coordinate
+	private double y;		  // y-coordinate	  
 
 	Vector2(){
 		this(0.0,0.0);
@@ -14,7 +14,7 @@ public class Vector2{
 	}
 
 	public Vector2 normalizeCopy(){
-		return new Vector2(this.x / this.length(),this.y / this.length());
+		return new Vector2(x / this.length(),y / this.length());
 	}
 	
 	public void normalize(){
@@ -27,7 +27,7 @@ public class Vector2{
 	}
 	
 	public double length(){
-		return Math.sqrt((this.x*this.x) + (this.y*this.y));
+		return Math.sqrt((x * x) + (y * y));
 	}
 	
 	public Vector2 mul(double m){

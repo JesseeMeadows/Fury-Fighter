@@ -2,6 +2,12 @@ import java.awt.*;
 import java.util.HashMap;
 import java.awt.image.BufferedImage;
 
+/**
+ * This class acts as the opening title screen which takes place after timing out or
+ * entering a key on the initial splash screen(displays "Fury fighter" and "BSD License").
+ * The view displays various user options to play the game( currently "start" and "password").
+ */
+
 public class TitleView extends View{
 	
 	private ViewController viewController;
