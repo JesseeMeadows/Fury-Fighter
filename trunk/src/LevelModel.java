@@ -15,212 +15,184 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.JSONArray;
 import java.lang.Number;
-
+/*
+ * This class is used to load and represent each of the games levels. Each individual level is stored
+ * inside a JSON file, which contains all aspects of a given level.
+ * Aspects are: Enemies, pickups, tilesets, and tilemappings used to construct that particular level
+ */
 
 public class LevelModel extends Model{
     
     private PlayerModel playerModel;
     private ModelController modelController;
 
-    private int tileMapWidth;
-    private int tileMapHeight;
-    private int tileWidth;
-    private int tileHeight;
+    private int tileMapWidth;      // Width of map  : tile units
+    private int tileMapHeight;	   // Height of map : tile units
+    private int tileWidth;		   // Width of tile : pixel units
+    private int tileHeight;		   // Height of tile: pixel units
+    private int mapWidthInPixels;  //
 
-    private float scrollDistance;
-    private float scrollVelocity;
-    private int scrollDelta;
+    private float distanceScrolled;  // Total distance scrolled from beginning: pixel units
+    private float scrollVelocity;    // 
+    private int scrollDelta;         // Distance scrolled the previous frame
     
     private BufferedImage[] tileImages;
     private int[] tileMap;
     
-    private ArrayList<EnemyModel> enemyModels;
-    private ArrayList<EnemyModel> queuedEnemies;
-    private ArrayList<Bullet> enemyBullets;
-    private ArrayList<Pickup> levelPickups;
+    private ArrayList<EnemyModel> enemyModels;     // Contains each enemy model that's currently active
+    private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active
+    private ArrayList<Bullet> enemyBullets;        // Contains active enemy bullets on screen
+    private ArrayList<Pickup> levelPickups;        // Contains active enemy drops on screen
 
     public boolean paused;
 	
     private MillisecTimer deathTimer;
 	
-    LevelModel(ModelController m){
-		this.modelController = m;
-		this.playerModel = new PlayerModel(this);
-		m.getViewController().getDrawPanel().getInputHandler().registerInputResponder(this.playerModel);
+    LevelModel(ModelController model){
+		modelController = model;
+		playerModel = new PlayerModel(this);
+		model.getViewController().getDrawPanel().getInputHandler().registerInputResponder(playerModel);
 		
-		this.scrollDistance = 0.0f;
-		this.scrollVelocity = 0.05f;
-		this.scrollDelta = 0;
+		distanceScrolled = 0.0f;
+		scrollVelocity = 0.05f;
+		scrollDelta = 0;
 		
-		this.load("assets/test_level.json");
+		load("assets/test_level.json");
 		
-		this.enemyModels = new ArrayList<EnemyModel>();
-		this.enemyBullets = new ArrayList<Bullet>();
-		this.levelPickups = new ArrayList<Pickup>();
+		queuedEnemies = new ArrayList<EnemyModel>();
+		enemyModels = new ArrayList<EnemyModel>();
+		enemyBullets = new ArrayList<Bullet>();
+		levelPickups = new ArrayList<Pickup>();
 		
 		paused = false;
 		
-		this.deathTimer = null;
+		deathTimer = null;
 		
 		SoundManager.get().playSound("music");
 		
     }
-    public int update(float dt){
-	
-		if(paused || this.getDeathTimerDt() > 0){
+
+	public int update(float dt) {
+		// if paused or respawning, do nothing
+		if (paused || getDeathTimerDt() > 0) {
 			return 0;
 		}
-		if(this.scrollDistance < this.tileMapWidth*this.tileWidth - (ViewController.SCREEN_WIDTH +33)){
-		    this.scrollDelta = (int)(this.scrollVelocity *dt);
-		    this.scrollDistance += this.scrollDelta;
-		}
-		else{
-		    this.scrollDelta = 0;
+		
+		/* displays rest of the map if there's more to see, -Note: the 33 refers to a buffer space to load 
+	 	   the enemies off screen to ensure their appearance is natural -- flyer's width is 32 pixels */
+		if (distanceScrolled < mapWidthInPixels - (ViewController.SCREEN_WIDTH + 33)) {   
+			scrollDelta = (int) (scrollVelocity * dt);
+			distanceScrolled += scrollDelta;
+		} else {
+			scrollDelta = 0;  // end of map
 		}
 		
-		for(int xx=0;xx<this.queuedEnemies.size();xx++){
-			EnemyModel em = this.queuedEnemies.get(xx);
-			if(this.scrollDistance + ViewController.SCREEN_WIDTH > em.getXPos() ){
-				this.addEnemyModel(em);
-				this.queuedEnemies.remove(xx);
+		// Adds new enemies to screen(offscreen technically) when their start coordinate(xPos) appears on screen
+		for (int xx = 0; xx < queuedEnemies.size(); xx++) {
+			EnemyModel em = queuedEnemies.get(xx);
+			if (distanceScrolled + ViewController.SCREEN_WIDTH > em.getXPos()) {
+				addEnemyModel(em);
+				queuedEnemies.remove(xx);
 				xx--;
 			}
-			
+
 		}
 		
-		this.playerModel.update(dt);
+		playerModel.update(dt);
 		
-		for(int xx=0;xx<this.enemyModels.size();xx++){
-			EnemyModel em = this.enemyModels.get(xx);
+		// for statement: 
+		for(int xx=0;xx<enemyModels.size();xx++){
+			EnemyModel em = enemyModels.get(xx);
+			
+			// Remove enemy from active enemies if dead
 			if(em.getDead() == true){
-			    this.enemyModels.remove(xx);
+			    enemyModels.remove(xx);
 			    xx--;
 			}
+			// Otherwise update the enemies
 			else{
 			    em.update(dt);
-			    if(em.shootBullet()){
-				Vector2 playerPos = new Vector2(this.playerModel.getXPos(),this.playerModel.getYPos());
-				Vector2 enemyPos = new Vector2(em.getXPos(),em.getYPos());
-				Vector2 dir = enemyPos.sub(playerPos);
-				this.enemyBullets.add(new EnemyBullet(em.xPos+(em.width/2),em.yPos+(em.height/2),dir));
+			    
+			    // Creates a bullet to travel from enemies position to players position(both positions in respect to time of roll)
+			    if (em.shootBullet()){                                                                 
+				Vector2 playerPos = new Vector2(playerModel.getXPos(),playerModel.getYPos());          // Obtains player's location to shoot towards that direction
+				Vector2 enemyPos = new Vector2(em.getXPos(),em.getYPos());							   // Obtains enemy position at time of shot
+				Vector2 dir = enemyPos.sub(playerPos);                                                 // Creates a vector for bullets travel during its life span
+				enemyBullets.add(new EnemyBullet(em.xPos+(em.width/2),em.yPos+(em.height/2),dir));
 			    }
 				
+			    // Player dies if he collides with enemy
 				if(Utils.boxCollision(em.getBoundingBox(),playerModel.getBoundingBox())){
-					this.playerDeath();
+					playerDeath();
 				}
 			}
 		}
-		
-		for(int xx=0;xx<this.enemyBullets.size();xx++){
-			if(this.enemyBullets.get(xx).shouldDelete()){
-				this.enemyBullets.remove(xx);
-				xx--;
+		// Checks if any active bullets contact user and deletes those that are off-screen
+		for(int xx=0; xx < enemyBullets.size(); xx++){
+			if(enemyBullets.get(xx).shouldDelete()){
+				enemyBullets.remove(xx);
+				xx--; // 
 			}
 			else{
-				Bullet b = this.enemyBullets.get(xx);
+				Bullet b = enemyBullets.get(xx);
 				b.update(dt);
-				if(b.collidesWith(this.playerModel.getBoundingBox())){
-					this.playerDeath();
+				if(b.collidesWith(playerModel.getBoundingBox())){
+					playerDeath();
 				}
 				
 			}
 		}
 		
-		for(int xx=0;xx<this.levelPickups.size();xx++){
-		    this.levelPickups.get(xx).update(dt,this.scrollDelta);
+		// Updates all pickups locations on screen
+		for (int xx = 0; xx < levelPickups.size(); xx++) {
+			levelPickups.get(xx).update(dt, scrollDelta);
 		}
-		
+
 		return 0;
     }
 	
-	public void cobaltBomb(){
-		this.enemyBullets.clear();
-		for(int xx=0;xx<this.enemyModels.size();xx++){
-			this.enemyModels.get(xx).kill();
+	// Destroys all enemies and their bullets on screen
+	public void cobaltBomb() {
+		enemyBullets.clear();
+		for (int activeEnemy = 0; activeEnemy < enemyModels.size(); activeEnemy++) {
+			enemyModels.get(activeEnemy).kill();
 		}
 	}
 	
-    public void playerDeath(){
-	SoundManager.get().playSound("death");
-	this.deathTimer = new MillisecTimer();
-	this.playerModel.death();
-	this.enemyBullets.clear();
-	this.enemyModels.clear();
-	
-	if(playerModel.getLives() < 0){
-	    this.modelController.setMainModel(new GameOverModel(this.modelController));
-	    this.modelController.getViewController().setMainView(new GameOverView(this.modelController.getViewController()));
+	// Configurations for player upon death
+	public void playerDeath() {
+		SoundManager.get().playSound("death");
+		deathTimer = new MillisecTimer();
+		playerModel.death();
+		enemyBullets.clear();
+		enemyModels.clear();
+
+		// Game Over if player runs out of lives
+		if (playerModel.getLives() < 0) {
+			modelController.setMainModel(new GameOverModel(modelController));
+			modelController.getViewController().setMainView(new GameOverView(modelController.getViewController()));
+		}
 	}
-    }
 	
-    public float getDeathTimerDt(){
-	if(this.deathTimer != null){
-		float dt = this.deathTimer.getDt();
-		if(dt < 2000)
-			return this.deathTimer.getDt();
-		else{
-			this.deathTimer = null;
+	// returns time since death if 2 seconds haven't elapsed, 0 otherwise
+	public float getDeathTimerDt() {
+		if (deathTimer != null) {
+			float dt = deathTimer.getDt();
+			if (dt < 2000)
+				return deathTimer.getDt();
+			else {
+				deathTimer = null;
+				return 0.0f;
+			}
+		} 
+		else {
 			return 0.0f;
 		}
 	}
-	else{
-		return 0.0f;
-	}
-    }
 	
-    public HashMap<String,Model> getVisibleModels(){
-		HashMap<String,Model> rv = new HashMap<String,Model>();
-		rv.put("playerModel",this.playerModel);
-		return rv;
-    }
-
-    public int getScrollDistance(){
-		return (int)this.scrollDistance;
-    }
-    public int getScrollDelta(){
-	return this.scrollDelta;
-    }
-	    
-    public int[] getTileMap(){
-		return this.tileMap;
-    }
-    public BufferedImage getTileImage(int idx){
-		return this.tileImages[idx];
-    }
-    public int getTileMapWidth(){
-		return this.tileMapWidth;
-    }
-    public int getTileMapHeight(){
-		return this.tileMapHeight;
-    }
-    public int getTileWidth(){
-		return this.tileWidth;
-    }
-    public int getTileHeight(){
-		return this.tileHeight;
-    }
-
-    public ModelController getModelController(){
-		return this.modelController;
-    }
-
-    public void addEnemyModel(EnemyModel em){
-	this.enemyModels.add(em);
-    }
-	
-	public ArrayList<EnemyModel> getEnemyModels(){
-		return this.enemyModels;
-	}
-    
-    public ArrayList<Bullet> getEnemyBullets(){
-	return this.enemyBullets;
-    }
-    
-    public ArrayList<Pickup> getLevelPickups(){
-	return this.levelPickups;
-    }
-    
-    
+	/* This function takes a LevelMap which is stored in a JSON file and loads it
+	 * --- A JSON file is basically a file that's used to store a ton of different 
+	 * 	   types of information                                                   */
     private void load(String filename){
 		
 		BufferedReader filein = null;
@@ -233,55 +205,75 @@ public class LevelModel extends Model{
 			while((linein = filein.readLine())!= null){
 				json = json + linein;
 			}
-			
+			// Parses the Level json file into a JSON object to prepare for splitting the data between attributes
 			JSONObject jsonObject = (JSONObject)JSONValue.parse(json);
 			
-			this.tileMapHeight = ((Number)jsonObject.get("height")).intValue();
-			this.tileMapWidth = ((Number)jsonObject.get("width")).intValue();
-			this.tileWidth = ((Number)jsonObject.get("tilewidth")).intValue();
-			this.tileHeight = ((Number)jsonObject.get("tileheight")).intValue();
+			tileMapHeight = ((Number)jsonObject.get("height")).intValue();   
+			tileMapWidth = ((Number)jsonObject.get("width")).intValue();     
+			tileWidth = ((Number)jsonObject.get("tilewidth")).intValue();
+			tileHeight = ((Number)jsonObject.get("tileheight")).intValue();
+			
 			
 			JSONArray tilesets = (JSONArray)jsonObject.get("tilesets");
-			JSONObject tilesetsInfo = (JSONObject)tilesets.get(0);
-			String tileMapFile = (String)tilesetsInfo.get("image");
+			JSONObject tilesetsInfo = (JSONObject)tilesets.get(0);       // "firstgid:1"
+			String tileMapFile = (String)tilesetsInfo.get("image");      // gets location of tileset.png
 			
 			tileSet = ImageIO.read(new File("assets/"+tileMapFile));
 		  
-			int rows = tileSet.getHeight() / this.tileHeight;
-			int cols = tileSet.getWidth() / this.tileWidth;
+			int rows = tileSet.getHeight() / tileHeight;
+			int cols = tileSet.getWidth() / tileWidth;
 			
-			this.tileImages = new BufferedImage[rows * cols];
-
+			// Loads each individual tile of the tileset file into the buffer to be quickly 
+			// reference when setting up the level
+			tileImages = new BufferedImage[rows * cols];
 			for(int yy = 0; yy < rows; yy++){
 				for(int xx = 0; xx < cols; xx++){
-					this.tileImages[yy * rows + xx] = tileSet.getSubimage(xx * this.tileWidth, yy * this.tileHeight, this.tileWidth, this.tileHeight);
+					tileImages[yy * rows + xx] = tileSet.getSubimage(xx * tileWidth, yy * tileHeight, tileWidth, tileHeight);
 				}
 			}
 
+			
 			JSONArray layersArray = (JSONArray)jsonObject.get("layers");
 			JSONObject backgroundLayer = (JSONObject)layersArray.get(0);
 			
-			JSONArray mapData = (JSONArray)backgroundLayer.get("data");
-			this.tileMap = new int[mapData.size()];
-			for(int xx = 0; xx < this.tileMap.length; xx++){
-				this.tileMap[xx] = ((Number)mapData.get(xx)).intValue();
+			JSONArray mapData = (JSONArray)backgroundLayer.get("data");    // gets data array(line:4 in testlevel)
+			tileMap = new int[mapData.size()];							   // gets data array's size
+			for(int xx = 0; xx < tileMap.length; xx++){                    // Loads the data array into memory
+				tileMap[xx] = ((Number)mapData.get(xx)).intValue();		   // ^^^
 			}
+			/* The data array is basically the level map that's created from using the tiles in
+			 * the tileset.png file. Each entry in "data" references which tile from the tileset goes
+			 * to that particular location on the level's map(tilemap).
+			 * Quick Breakdown(test level):
+			 * 		tileMapHeight = 14     -- since there's 14 vertical tiles of gameplay, with the other 2 used for the gui
+			 * 		tileMapWidth = 160     -- you only see 16 at a time(scrolls through them all eventually)
+			 * 		tilemap Height * tileMapWidth = 14 * 160 = 2240 total tiles to represent the level's map(tileMap)
+			 * 
+			 * 		Thus the data array in the json file, which is loaded into mapData, is of size 2240, with each entry
+			 * 		referencing the tile that goes to that particular position of the level's map(as previously stated).			 * 		
+			 */
 			
+			// Loads all enemies and items into queues (currently only speed-pod and enemy-flyer in test level JSON file)
 			JSONObject objectLayer = (JSONObject)layersArray.get(1);
 			JSONArray objectList = (JSONArray)objectLayer.get("objects");
-			for(int xx=0;xx<objectList.size();xx++){
-				JSONObject object = (JSONObject)objectList.get(xx);
+			for (int xx = 0; xx < objectList.size(); xx++) {
+				JSONObject object = (JSONObject) objectList.get(xx);
+				
 				if(((String)object.get("type")) =="enemy-flyer"){
-					this.queuedEnemies.add((EnemyModel)new FlyerModel(((Number)object.get("x")).intValue(),((Number)object.get("y")).intValue()));
+					queuedEnemies.add((EnemyModel)new FlyerModel(((Number)object.get("x")).intValue(),((Number)object.get("y")).intValue()));
 				}
+				
 				if(((String)object.get("type")) =="speed-pod"){
-					this.levelPickups.add(new Pickup(((Number)object.get("x")).intValue(),((Number)object.get("y")).intValue(),"speed","assets/speedPickupImage.png"));
+					levelPickups.add(new Pickup(((Number)object.get("x")).intValue(),((Number)object.get("y")).intValue(),"speed","assets/speedPickupImage.png"));
 				}
+				
 				if(((String)object.get("type")) == "defense-pod"){
-					this.levelPickups.add(new Pickup(((Number)object.get("x")).intValue(),((Number)object.get("y")).intValue(),"defense_pod","assets/defensePodImage.png"));
+					levelPickups.add(new Pickup(((Number)object.get("x")).intValue(),((Number)object.get("y")).intValue(),"defense_pod","assets/defensePodImage.png"));
 				}
+				
+				
 			}
-		}
+		} // - end try
 		catch(FileNotFoundException e){
 			e.printStackTrace();
 		}
@@ -298,5 +290,57 @@ public class LevelModel extends Model{
 			}
 			}
 		}
+    }
+
+    public int getScrollDistance(){
+		return (int)distanceScrolled;
+    }
+    public int getScrollDelta(){
+	return scrollDelta;
+    }
+	    
+    public int[] getTileMap(){
+		return tileMap;
+    }
+    public BufferedImage getTileImage(int idx){
+		return tileImages[idx];
+    }
+    public int getTileMapWidth(){
+		return tileMapWidth;
+    }
+    public int getTileMapHeight(){
+		return tileMapHeight;
+    }
+    public int getTileWidth(){
+		return tileWidth;
+    }
+    public int getTileHeight(){
+		return tileHeight;
+    }
+
+    public ModelController getModelController(){
+		return modelController;
+    }
+
+    public void addEnemyModel(EnemyModel em){
+	enemyModels.add(em);
+    }
+	
+	public ArrayList<EnemyModel> getEnemyModels(){
+		return enemyModels;
+	}
+    
+    public ArrayList<Bullet> getEnemyBullets(){
+	return enemyBullets;
+    }
+    
+    public ArrayList<Pickup> getLevelPickups(){
+	return levelPickups;
+    }
+      
+    public HashMap<String,Model> getVisibleModels(){
+		HashMap<String,Model> rv = new HashMap<String,Model>();
+		rv.put("playerModel",playerModel);
+		return rv;
     }
 }

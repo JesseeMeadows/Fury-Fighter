@@ -5,16 +5,17 @@ import java.awt.Rectangle;
 
 public abstract class EnemyModel extends Model{
 	
-	
+	// upper-left corner coordinate of enemies location box -- in relation the Map's level
 	protected int xPos;
 	protected int yPos;
 	
+	// enemies size(boxed) -- used in conjunction with x and y position to get enmemies bounding box
 	protected int width;
 	protected int height;
 	
 	protected boolean dead;
-	
-	protected int curFrame;
+
+	protected int curFrame; 
 	protected BufferedImage[] enemyFrames;
 	
 	EnemyModel(){	
@@ -32,13 +33,10 @@ public abstract class EnemyModel extends Model{
 		this.dead = false;
 	}
 	
+	// returns hitbox of enemy
 	public Rectangle getBoundingBox(){
 		return new Rectangle(this.xPos,this.yPos,this.enemyFrames[0].getWidth(), this.enemyFrames[0].getHeight());
-	}
-	
-	public HashMap<String,Model> getVisibleModels(){
-		return new HashMap<String,Model>();
-    }
+	}	
 	
 	public int update(float dt){
 		return 0;
@@ -80,4 +78,8 @@ public abstract class EnemyModel extends Model{
 	public Pickup getDrop(){
 		return null;
 	}
+	
+	public HashMap<String,Model> getVisibleModels(){
+		return new HashMap<String,Model>();
+    }
 }

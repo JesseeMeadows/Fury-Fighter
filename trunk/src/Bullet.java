@@ -9,25 +9,26 @@ import java.awt.*;
 public class Bullet{
     private float VELOCITY;
     
-    protected int xPos;
-    protected int yPos;
-    private int direction;
+    protected int xPos;                     // x-Coordinate of bullet
+    protected int yPos;						// y-Coordinate of bullet
+    private int direction;					
     private int millisecDelay;
 	
-	protected int power;
+	protected int power;					// bullet's damage
 
-    protected float velocity;
+    protected float velocity;				// bullet's speed
     
     BufferedImage bulletImage;
 
     Bullet(int x, int y, int direction){
-	this.xPos = x;
-	this.yPos = y;
-	this.millisecDelay = 10;
+	xPos = x;
+	yPos = y;
+	millisecDelay = 10;
 	this.direction = direction;
-	this.velocity = 0.5f;
-	this.power = 1;
+	velocity = 0.5f;
+	power = 1;
 
+	// loads bullet's image -- should be cached instead
 	try{
 	    this.bulletImage = ImageIO.read(new File("assets/bulletImage.png"));
 	}
@@ -36,49 +37,53 @@ public class Bullet{
 	}
     }
     
+    // Checks if bullets contacts passed in object's hitbox
     public boolean collidesWith(Rectangle boundingBox){
-	Rectangle bulletBox = new Rectangle(this.xPos, this.yPos, this.bulletImage.getWidth(),this.bulletImage.getHeight());
+	Rectangle bulletBox = new Rectangle(xPos, yPos, bulletImage.getWidth(),this.bulletImage.getHeight());
 	return Utils.boxCollision(bulletBox, boundingBox);
     }
 	
+    // Gets hit box of bullet
     public Rectangle getBoundingBox(){
 		return new Rectangle(this.xPos, this.yPos, this.bulletImage.getWidth(),this.bulletImage.getHeight());
 	}
 	
-    public int update(float dt){
-	if(this.direction == 0){
-	    this.yPos -= this.velocity*dt;
+    //  Updates the bullets position based on the bullets velocity and direction
+    public int update(float dt) {
+	if (direction == 0) {
+	    yPos -= velocity*dt;
 	}
-	else if(this.direction == 1){
-	    this.xPos += this.velocity*dt;
-	    this.yPos -= this.velocity*dt;
+	else if (this.direction == 1) {
+	    xPos += velocity*dt;
+	    yPos -= velocity*dt;
 	}
-	else if(this.direction == 2){
-	    this.xPos += this.velocity*dt;
+	else if (direction == 2) {
+	    xPos += velocity*dt;
 	}
-	else if(this.direction == 3){
-	    this.xPos += this.velocity*dt;
-	    this.yPos += this.velocity*dt;
+	else if (direction == 3) {
+	    xPos += velocity*dt;
+	    yPos += velocity*dt;
 	}
-	else if(this.direction == 4){
-	    this.yPos += this.velocity*dt;
+	else if (direction == 4) {
+	    yPos += velocity*dt;
 	}
-	else if(this.direction == 5){
-	    this.xPos -= this.velocity*dt;
-	    this.yPos += this.velocity*dt;
+	else if (direction == 5) {
+	    xPos -= this.velocity*dt;
+	    yPos += this.velocity*dt;
 	}
-	else if(this.direction == 6){
-	    this.xPos -= this.velocity*dt;
+	else if (direction == 6) {
+	    xPos -= velocity*dt;
 	}
-	else if(this.direction == 7){
-	    this.xPos -= this.velocity*dt;
-	    this.yPos -= this.velocity*dt;
+	else if (direction == 7) {
+	    xPos -= velocity*dt;
+	    yPos -= velocity*dt;
 	}
 	return 0;
     }
     
+    // returns true if bullet of off screen
     public boolean shouldDelete(){
-	if(this.xPos>ViewController.SCREEN_WIDTH + 10 || this.xPos< -10 || this.yPos > ViewController.SCREEN_HEIGHT - (64 + this.bulletImage.getHeight()) || this.yPos < -10){
+	if (this.xPos > ViewController.SCREEN_WIDTH + 10 || this.xPos < -10 || this.yPos > ViewController.SCREEN_HEIGHT - (64 + this.bulletImage.getHeight()) || this.yPos < -10){
 	    return true;
 	}
 	else{
