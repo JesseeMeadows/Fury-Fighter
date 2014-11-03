@@ -78,17 +78,17 @@ public class LevelModel extends Model{
 			return 0;
 		}
 		
-		mapScroll();
+		mapScroll(dt);
 		
 		spawnEnemies();
 		
 		playerModel.update(dt);
 		
-		updateEnemies();
+		updateEnemies(dt);
 		
-		manageBullets();
+		manageBullets(dt);
 		
-		updatePickups();
+		updatePickups(dt);
 
 		return 0;
     }
@@ -96,7 +96,7 @@ public class LevelModel extends Model{
 	/**
 	 * displays rest of the map if there's more to see, -Note: the 33 refers to a buffer space to load 
 	 * the enemies off screen to ensure their appearance is natural -- flyer's width is 32 pixels */
-	public void mapScroll()
+	public void mapScroll(float dt)
 	{
 		if (distanceScrolled < mapWidthInPixels - (ViewController.SCREEN_WIDTH + 33)) {   
 			scrollDelta = (int) (scrollVelocity * dt);
@@ -121,7 +121,7 @@ public class LevelModel extends Model{
 	}
 	
 	/** Removes dead enemies, updates living/active enemies, and creates enemy bullets*/
-	public void updateEnemies()
+	public void updateEnemies(float dt)
 	{
 		// for statement: 
 		for(int xx=0;xx<enemyModels.size();xx++){
@@ -153,7 +153,7 @@ public class LevelModel extends Model{
 	}
 	
 	/** Checks if any active bullets contact user and deletes those that are off-screen*/
-	public void manageBullets()
+	public void manageBullets(float dt)
 	{
 		for(int xx=0; xx < enemyBullets.size(); xx++){
 			if(enemyBullets.get(xx).shouldDelete()){
@@ -172,7 +172,7 @@ public class LevelModel extends Model{
 	}
 	
 	/** Updates all pickups locations on screen*/
-	public void updatePickups()
+	public void updatePickups(float dt)
 	{
 		for (int xx = 0; xx < levelPickups.size(); xx++) {
 			levelPickups.get(xx).update(dt, scrollDelta);
