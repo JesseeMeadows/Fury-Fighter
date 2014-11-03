@@ -5,6 +5,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(value={
 		TestMillisecTimer.class,
 		TestUtils.class,
+		TestFlyerModel.class,
 
 })
 public class TestAllSuite {}

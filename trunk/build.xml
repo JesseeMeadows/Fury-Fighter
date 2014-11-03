@@ -95,13 +95,13 @@
 
 	<target name="furyFighterCheckout" depends="git-pull" />
 
-	<target name="build" depends="compile.java, furyFighterCheckout" />
+	<target name="build" depends="furyFighterCheckout, compile.java" />
 	<target name="buildLocal" depends="compile.java" />
-	<target name="run" depends="run.java, furyFighterCheckout" />
-	<target name="cleanbuild" depends="cleancompile.java, furyFighterCheckout" />
+	<target name="run" depends="furyFighterCheckout, run.java" />
+	<target name="cleanbuild" depends="furyFighterCheckout, cleancompile.java" />
 
-	<target name="compileTests" depends="compile.test, furyFighterCheckout" />
+	<target name="compileTests" depends="furyFighterCheckout, compile.test" />
 	<target name="compileTestsLocal" depends="compile.test" />
-	<target name="runTests" depends="test, furyFighterCheckout" />
-	<target name="testReports" depends="report, furyFighterCheckout" />
+	<target name="runTests" depends="furyFighterCheckout, test" />
+	<target name="testReports" depends="furyFighterCheckout, report" />
 </project>
