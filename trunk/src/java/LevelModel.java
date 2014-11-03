@@ -78,16 +78,37 @@ public class LevelModel extends Model{
 			return 0;
 		}
 		
-		/* displays rest of the map if there's more to see, -Note: the 33 refers to a buffer space to load 
-	 	   the enemies off screen to ensure their appearance is natural -- flyer's width is 32 pixels */
+		mapScroll();
+		
+		spawnEnemies();
+		
+		playerModel.update(dt);
+		
+		updateEnemies();
+		
+		manageBullets();
+		
+		updatePickups();
+
+		return 0;
+    }
+	
+	/**
+	 * displays rest of the map if there's more to see, -Note: the 33 refers to a buffer space to load 
+	 * the enemies off screen to ensure their appearance is natural -- flyer's width is 32 pixels */
+	public void mapScroll()
+	{
 		if (distanceScrolled < mapWidthInPixels - (ViewController.SCREEN_WIDTH + 33)) {   
 			scrollDelta = (int) (scrollVelocity * dt);
 			distanceScrolled += scrollDelta;
 		} else {
 			scrollDelta = 0;  // end of map
 		}
-		
-		// Adds new enemies to screen(offscreen technically) when their start coordinate(xPos) appears on screen
+	}
+	
+	/**Adds new enemies to screen(offscreen technically) when their start coordinate(xPos) appears on screen*/
+	public void spawnEnemies()
+	{
 		for (int xx = 0; xx < queuedEnemies.size(); xx++) {
 			EnemyModel em = queuedEnemies.get(xx);
 			if (distanceScrolled + ViewController.SCREEN_WIDTH > em.getXPos()) {
@@ -97,9 +118,11 @@ public class LevelModel extends Model{
 			}
 
 		}
-		
-		playerModel.update(dt);
-		
+	}
+	
+	/** Removes dead enemies, updates living/active enemies, and creates enemy bullets*/
+	public void updateEnemies()
+	{
 		// for statement: 
 		for(int xx=0;xx<enemyModels.size();xx++){
 			EnemyModel em = enemyModels.get(xx);
@@ -127,7 +150,11 @@ public class LevelModel extends Model{
 				}
 			}
 		}
-		// Checks if any active bullets contact user and deletes those that are off-screen
+	}
+	
+	/** Checks if any active bullets contact user and deletes those that are off-screen*/
+	public void manageBullets()
+	{
 		for(int xx=0; xx < enemyBullets.size(); xx++){
 			if(enemyBullets.get(xx).shouldDelete()){
 				enemyBullets.remove(xx);
@@ -142,14 +169,15 @@ public class LevelModel extends Model{
 				
 			}
 		}
-		
-		// Updates all pickups locations on screen
+	}
+	
+	/** Updates all pickups locations on screen*/
+	public void updatePickups()
+	{
 		for (int xx = 0; xx < levelPickups.size(); xx++) {
 			levelPickups.get(xx).update(dt, scrollDelta);
 		}
-
-		return 0;
-    }
+	}
 	
 	// Destroys all enemies and their bullets on screen
 	public void cobaltBomb() {

@@ -4,6 +4,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(value=org.junit.runners.Suite.class)
 @SuiteClasses(value={
 		TestMillisecTimer.class,
+		TestUtils.class,
 
 })
 public class TestAllSuite {}
