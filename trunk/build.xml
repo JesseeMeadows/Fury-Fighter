@@ -1,18 +1,66 @@
 <project name="furyfigher" default="compile">
 	<property file="build.properties" />
-	<path id="classpath_lib">
-        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+	<path id="classpath_java_lib">
+        <fileset dir="${lib.java.dir}" includes="**/*.jar"/>
+    </path>
+    <path id="classpath_test_lib">
+        <fileset dir="${lib.test.dir}" includes="**/*.jar"/>
     </path>
 
 	<target name="compile.java">
 		<mkdir dir="${target.classes.java.dir}" />
 		<javac destdir="${target.classes.java.dir}">
 			<classpath>
-                <path refid="classpath_lib"/>
+                <path refid="classpath_java_lib"/>
             </classpath>
 
 			<src path="${src.java.dir}" />
 		</javac>
+	</target>
+
+	<target name="compile.test" depends="compile.java">
+		<mkdir dir="${target.classes.test.dir}" />
+		<javac destdir="${target.classes.test.dir}">
+			<src path="${src.test.dir}" />
+			<classpath>
+				<path refid="classpath_java_lib"/>
+				<path refid="classpath_test_lib"/>
+				<pathelement location="${target.classes.java.dir}" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="test" depends="compile.test">
+		<delete dir="${target.report.dir}" quiet="true" />
+		<mkdir dir="${target.report.dir}" />
+
+		<junit printsummary="yes" fork="yes">
+			<formatter type="xml" />
+			<classpath>
+				<path refid="classpath_java_lib"/>
+				<path refid="classpath_test_lib"/>
+				<pathelement location="${target.classes.java.dir}" />
+				<pathelement location="${target.classes.test.dir}" />
+			</classpath>
+
+			<batchtest fork="yes" todir="${target.report.dir}">
+				<fileset dir="${src.test.dir}">
+					<include name="**/*.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="report" depends="test">
+		<delete dir="${data.report.dir}" quiet="true" />
+		<mkdir dir="${data.report.dir}" />
+
+		<junitreport todir="${data.report.dir}">
+			<fileset dir="${target.report.dir}">
+				<include name="**/TEST-*.xml" />
+			</fileset>
+			<report todir="${data.report.dir}" />
+		</junitreport>
 	</target>
 
 	<target name="clean.java">
@@ -34,7 +82,7 @@
     <target name="run.java" depends="jar.java">
     	<java jar="${target.jar.dir}/furyfighter.jar" fork="true" dir="${target.jar.dir}">
     		<classpath>
-                <path refid="classpath_lib"/>
+                <path refid="classpath_java_lib"/>
             </classpath>
     	</java>
     </target>
@@ -42,4 +90,8 @@
 	<target name="build" depends="compile.java" />
 	<target name="run" depends="run.java" />
 	<target name="cleanbuild" depends="cleancompile.java" />
+
+	<target name="compileTests" depends="compile.test" />
+	<target name="runTests" depends="test" />
+	<target name="testReports" depends="report" />
 </project>
