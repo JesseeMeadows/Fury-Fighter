@@ -87,11 +87,21 @@
     	</java>
     </target>
 
-	<target name="build" depends="compile.java" />
-	<target name="run" depends="run.java" />
-	<target name="cleanbuild" depends="cleancompile.java" />
+    <target name="git-pull">
+    	<exec executable="git">
+    		<arg value="pull" />
+    	</exec>
+    </target>
 
-	<target name="compileTests" depends="compile.test" />
-	<target name="runTests" depends="test" />
-	<target name="testReports" depends="report" />
+	<target name="furyFighterCheckout" depends="git-pull" />
+
+	<target name="build" depends="compile.java, furyFighterCheckout" />
+	<target name="buildLocal" depends="compile.java" />
+	<target name="run" depends="run.java, furyFighterCheckout" />
+	<target name="cleanbuild" depends="cleancompile.java, furyFighterCheckout" />
+
+	<target name="compileTests" depends="compile.test, furyFighterCheckout" />
+	<target name="compileTestsLocal" depends="compile.test" />
+	<target name="runTests" depends="test, furyFighterCheckout" />
+	<target name="testReports" depends="report, furyFighterCheckout" />
 </project>
