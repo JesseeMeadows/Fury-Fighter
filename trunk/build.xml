@@ -45,7 +45,7 @@
 
 			<batchtest fork="yes" todir="${target.report.dir}">
 				<fileset dir="${src.test.dir}">
-					<include name="**/*.class" />
+					<include name="TestAllSuite.java" />
 				</fileset>
 			</batchtest>
 		</junit>
