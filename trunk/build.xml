@@ -80,7 +80,7 @@
     </target>
 
     <target name="run.java" depends="jar.java">
-    	<java jar="${target.jar.dir}/furyfighter.jar" fork="true" dir="${target.jar.dir}">
+    	<java jar="${target.jar.dir}/furyfighter.jar" fork="true">
     		<classpath>
                 <path refid="classpath_java_lib"/>
             </classpath>
