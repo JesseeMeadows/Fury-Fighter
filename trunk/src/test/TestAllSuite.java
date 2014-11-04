@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestUtils.class,
 		TestFlyerModel.class,
 		TestEnemyBullet.class,
+		TestInputResponder.class,
 
 })
 public class TestAllSuite {}
