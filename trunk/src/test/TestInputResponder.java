@@ -8,9 +8,26 @@ import org.junit.Before;
 
 public class TestInputResponder implements InputResponder
 {
+	private static final Component testKeyEventSource = new Container();
+
 	private InputResponder inputResponder;
 	private KeyEvent currentKeyEvent = null;
 	private static final char testKey = 'x';
+
+	private static KeyEvent generateKeyEvent(int id, char key)
+	{
+		return new KeyEvent(testKeyEventSource, id, System.currentTimeMillis(), 0, (int)key, key);
+	}
+
+	public static KeyEvent generateKeyDownEvent(char key)
+	{
+		return generateKeyEvent(KeyEvent.KEY_PRESSED, key);
+	}
+
+	public static KeyEvent generateKeyUpEvent(char key)
+	{
+		return generateKeyEvent(KeyEvent.KEY_RELEASED, key);
+	}
 
 	public void keyDownResponse(KeyEvent e)
 	{
@@ -34,11 +51,7 @@ public class TestInputResponder implements InputResponder
 	@Test
 	public void testKeyDownUpResponse()
 	{
-		Component source = new Container();
-		KeyEvent key = new KeyEvent(source, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, (int)testKey, testKey);
-		inputResponder.keyDownResponse(key);
-
-		key = new KeyEvent(source, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 0, (int)testKey, testKey);
-		inputResponder.keyUpResponse(key);
+		inputResponder.keyDownResponse(generateKeyDownEvent(testKey));
+		inputResponder.keyUpResponse(generateKeyUpEvent(testKey));
 	}
 }
