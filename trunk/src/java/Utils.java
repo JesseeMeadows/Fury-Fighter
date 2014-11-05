@@ -2,12 +2,11 @@ import java.util.Random;
 import java.awt.Rectangle;
 
 public class Utils {
+	private static final Random rand = new Random();
 
 	// Returns uniformly random between the the number range(ends are inclusive)
 	public static int randInt(int min, int max) {
-		Random rand = new Random();
-		int random = rand.nextInt((max - min) + 1) + min;
-		return random;
+		return rand.nextInt((max - min) + 1) + min;
 	}
 
 	// Determines if 2 hitbox's collide
