@@ -440,7 +440,7 @@ public class PlayerModel extends Model implements InputResponder{
 
 			if (Utils.boxCollision(new Rectangle(xPos,yPos,spriteWidth,spriteHeight),new Rectangle(pk.getXPos(),pk.getYPos(),pk.getWidth(),pk.getHeight()))){
 				getPickup(pk.type);
-				score += ScoreTable.PICKUPSCORE;
+				score += ScoreTable.scoreForPickup(pk);
 				levelModel.getLevelPickups().remove(xx);
 				xx--;
 			}
@@ -457,7 +457,7 @@ public class PlayerModel extends Model implements InputResponder{
 				EnemyModel em = levelModel.getEnemyModels().get(xx);
 				if (Utils.boxCollision(em.getBoundingBox(),boundingBox)){
 					em.kill();
-					score += ScoreTable.ENEMYSCORE;
+					score += ScoreTable.scoreForKilled(em);
 					Pickup[] p = em.getDrop();
 					if (p[0] != null)
 						levelModel.getLevelPickups().add(p[0]);
@@ -517,7 +517,7 @@ public class PlayerModel extends Model implements InputResponder{
 						boolean kill = em.hit(b.getPower());
 						if (kill == true) {
 							SoundManager.get().playSound("kill");
-							score += ScoreTable.ENEMYSCORE;
+							score += ScoreTable.scoreForKilled(em);
 							Pickup[] p = em.getDrop();
 							if (p[0] != null)
 								levelModel.getLevelPickups().add(p[0]);
