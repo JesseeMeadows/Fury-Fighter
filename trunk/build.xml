@@ -75,6 +75,7 @@
         <jar destfile="${target.jar.dir}/furyfighter.jar" basedir="${target.classes.java.dir}">
             <manifest>
                 <attribute name="Main-Class" value="main"/>
+                <attribute name="Class-Path" value="../../lib/java/json-simple-1.1.1.jar"/>
             </manifest>
         </jar>
     </target>
