@@ -30,6 +30,10 @@ public class TestFlyerModel
 		boolean seenTrue = false;
 		boolean seenFalse = false;
 
+		assertEquals(FlyerModel.SHOOT_BULLET_MIN, 0);
+		assertEquals(FlyerModel.SHOOT_BULLET_MAX, 19);
+		assertEquals(FlyerModel.SHOOT_BULLET_CONDITION, 0);
+
 		while (!seenTrue || !seenFalse)
 			if (flyerModel.shootBullet() == true)
 				seenTrue = true;
@@ -40,22 +44,37 @@ public class TestFlyerModel
 	@Test
 	public void testGetDrop()
 	{
+		int i;
+
 		boolean seenPickup = false;
 		boolean seenWeaponPickup = false;
 		boolean seenNull = false;
 
+		Pickup[] pickups = null;
 		Pickup pickup = null;
+
+		assertEquals(FlyerModel.DROP_BOMB_FRAGMENT_MIN, 0);
+		assertEquals(FlyerModel.DROP_BOMB_FRAGMENT_MAX, 4);
+		assertEquals(FlyerModel.DROP_BOMB_CONDITION, 1);
+
+		assertEquals(FlyerModel.DROP_WEAPON_POD_MIN, 0);
+		assertEquals(FlyerModel.DROP_WEAPON_POD_MAX, 4);
+		assertEquals(FlyerModel.DROP_WEAPON_POD_CONDITION, 0);
 
 		while (!seenPickup || !seenWeaponPickup || !seenNull)
 		{
-			pickup = flyerModel.getDrop();
+			pickups = flyerModel.getDrop();
 
-			if (pickup == null)
-				seenNull = true;
-			else if (pickup.getClass() == WeaponPickup.class)
-				seenWeaponPickup = true;
-			else if (pickup.getClass() == Pickup.class)
-				seenPickup = true;
+			for (i = 0; i < 2; i++) {
+				pickup = pickups[i];
+
+				if (pickup == null)
+					seenNull = true;
+				else if (pickup.getClass() == WeaponPickup.class)
+					seenWeaponPickup = true;
+				else if (pickup.getClass() == Pickup.class)
+					seenPickup = true;
+			}
 		}
 	}
 }
