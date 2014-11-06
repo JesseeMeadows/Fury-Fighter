@@ -39,9 +39,9 @@ public class LevelModel extends Model{
     private BufferedImage[] tileImages;
     private int[] tileMap;
     
-    private ArrayList<EnemyModel> enemyModels;     // Contains each enemy model that's currently active
+    private ArrayList<EnemyModel> activeEnemies;     // Contains each enemy model that's currently active
     private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active
-    private ArrayList<Bullet> enemyBullets;        // Contains active enemy bullets on screen
+    private ArrayList<Bullet> activeBullets;        // Contains active enemy bullets on screen
     private ArrayList<Pickup> levelPickups;        // Contains active enemy drops on screen
 
     public boolean paused;
@@ -57,11 +57,12 @@ public class LevelModel extends Model{
 		scrollVelocity = 0.05f;
 		scrollDelta = 0;
 		
-		load("assets/test_level.json");
+		
+		loadLevelFile("assets/test_level.json");
 		
 		queuedEnemies = new ArrayList<EnemyModel>();
-		enemyModels = new ArrayList<EnemyModel>();
-		enemyBullets = new ArrayList<Bullet>();
+		activeEnemies = new ArrayList<EnemyModel>();
+		activeBullets = new ArrayList<Bullet>();
 		levelPickups = new ArrayList<Pickup>();
 		
 		paused = false;
@@ -96,56 +97,62 @@ public class LevelModel extends Model{
 	/**
 	 * displays rest of the map if there's more to see, -Note: the 33 refers to a buffer space to load 
 	 * the enemies off screen to ensure their appearance is natural -- flyer's width is 32 pixels */
-	public void mapScroll(float dt)
+	private void mapScroll(float dt)
 	{
-		if (distanceScrolled < mapWidthInPixels - (ViewController.SCREEN_WIDTH + 33)) {   
+		boolean endOfLevel = distanceScrolled < mapWidthInPixels - (ViewController.SCREEN_WIDTH + 33);
+				
+		if (!endOfLevel) {
+			// Scroll right
 			scrollDelta = (int) (scrollVelocity * dt);
 			distanceScrolled += scrollDelta;
-		} else {
-			scrollDelta = 0;  // end of map
+		}
+		else {
+			scrollDelta = 0; // end of map
 		}
 	}
 	
 	/**Adds new enemies to screen(offscreen technically) when their start coordinate(xPos) appears on screen*/
-	public void spawnEnemies()
+	private void spawnEnemies()
 	{
-		for (int xx = 0; xx < queuedEnemies.size(); xx++) {
-			EnemyModel em = queuedEnemies.get(xx);
-			if (distanceScrolled + ViewController.SCREEN_WIDTH > em.getXPos()) {
-				addEnemyModel(em);
-				queuedEnemies.remove(xx);
-				xx--;
+		for (int i = 0; i < queuedEnemies.size(); i++) {
+			EnemyModel enemy = queuedEnemies.get(i);
+			boolean enemyCoordReached = distanceScrolled + ViewController.SCREEN_WIDTH > enemy.getXPos();			
+			
+			if (enemyCoordReached) {
+				activateEnemy(enemy);
+				queuedEnemies.remove(i);
+				i--;
 			}
 
 		}
 	}
 	
 	/** Removes dead enemies, updates living/active enemies, and creates enemy bullets*/
-	public void updateEnemies(float dt)
+	private void updateEnemies(float dt)
 	{
 		// for statement: 
-		for(int xx=0;xx<enemyModels.size();xx++){
-			EnemyModel em = enemyModels.get(xx);
-			
+		for (int i = 0; i < activeEnemies.size(); i++) {
+			EnemyModel enemy = activeEnemies.get(i);
+
 			// Remove enemy from active enemies if dead
-			if(em.getDead() == true){
-			    enemyModels.remove(xx);
-			    xx--;
+			if (enemy.isDead()) {
+				activeEnemies.remove(i);
+				i--;
 			}
 			// Otherwise update the enemies
 			else{
-			    em.update(dt);
+			    enemy.update(dt);
 			    
 			    // Creates a bullet to travel from enemies position to players position(both positions in respect to time of roll)
-			    if (em.shootBullet()){                                                                 
+			    if (enemy.shootBullet()){                                                                 
 				Vector2 playerPos = new Vector2(playerModel.getXPos(),playerModel.getYPos());          // Obtains player's location to shoot towards that direction
-				Vector2 enemyPos = new Vector2(em.getXPos(),em.getYPos());							   // Obtains enemy position at time of shot
+				Vector2 enemyPos = new Vector2(enemy.getXPos(),enemy.getYPos());							   // Obtains enemy position at time of shot
 				Vector2 dir = enemyPos.sub(playerPos);                                                 // Creates a vector for bullets travel during its life span
-				enemyBullets.add(new EnemyBullet(em.xPos+(em.width/2),em.yPos+(em.height/2),dir));
+				activeBullets.add(new EnemyBullet(enemy.xPos+(enemy.width/2),enemy.yPos+(enemy.height/2),dir));
 			    }
 				
 			    // Player dies if he collides with enemy
-				if(Utils.boxCollision(em.getBoundingBox(),playerModel.getBoundingBox())){
+				if(Utils.boxCollision(enemy.getBoundingBox(),playerModel.getBoundingBox())){
 					playerDeath();
 				}
 			}
@@ -153,47 +160,49 @@ public class LevelModel extends Model{
 	}
 	
 	/** Checks if any active bullets contact user and deletes those that are off-screen*/
-	public void manageBullets(float dt)
+	private void manageBullets(float dt)
 	{
-		for(int xx=0; xx < enemyBullets.size(); xx++){
-			if(enemyBullets.get(xx).shouldDelete()){
-				enemyBullets.remove(xx);
-				xx--; // 
+		for (int i = 0; i < activeBullets.size(); i++) {
+			if (activeBullets.get(i).shouldDelete()) {
+				activeBullets.remove(i);
+				i--; //
 			}
-			else{
-				Bullet b = enemyBullets.get(xx);
-				b.update(dt);
-				if(b.collidesWith(playerModel.getBoundingBox())){
+			else {
+				Bullet bullet = activeBullets.get(i);
+				bullet.update(dt);
+				if (bullet.collidesWith(playerModel.getBoundingBox())) {
 					playerDeath();
 				}
-				
+
 			}
 		}
 	}
 	
 	/** Updates all pickups locations on screen*/
-	public void updatePickups(float dt)
+	private void updatePickups(float dt)
 	{
-		for (int xx = 0; xx < levelPickups.size(); xx++) {
-			levelPickups.get(xx).update(dt, scrollDelta);
+		for (int i = 0; i < levelPickups.size(); i++) {
+			levelPickups.get(i).update(dt, scrollDelta);
 		}
 	}
 	
 	// Destroys all enemies and their bullets on screen
-	public void cobaltBomb() {
-		enemyBullets.clear();
-		for (int activeEnemy = 0; activeEnemy < enemyModels.size(); activeEnemy++) {
-			enemyModels.get(activeEnemy).kill();
+	public void cobaltBomb()
+	{
+		activeBullets.clear();
+		for (int i = 0; i < activeEnemies.size(); i++) {
+			activeEnemies.get(i).kill();
 		}
 	}
 	
 	// Configurations for player upon death
-	public void playerDeath() {
+	public void playerDeath()
+	{
 		SoundManager.get().playSound("death");
 		deathTimer = new MillisecTimer();
 		playerModel.death();
-		enemyBullets.clear();
-		enemyModels.clear();
+		activeBullets.clear();
+		activeEnemies.clear();
 
 		// Game Over if player runs out of lives
 		if (playerModel.getLives() < 0) {
@@ -203,7 +212,8 @@ public class LevelModel extends Model{
 	}
 	
 	// returns time since death if 2 seconds haven't elapsed, 0 otherwise
-	public float getDeathTimerDt() {
+	public float getDeathTimerDt()
+	{
 		if (deathTimer != null) {
 			float dt = deathTimer.getDt();
 			if (dt < 2000)
@@ -212,7 +222,7 @@ public class LevelModel extends Model{
 				deathTimer = null;
 				return 0.0f;
 			}
-		} 
+		}
 		else {
 			return 0.0f;
 		}
@@ -221,7 +231,7 @@ public class LevelModel extends Model{
 	/* This function takes a LevelMap which is stored in a JSON file and loads it
 	 * --- A JSON file is basically a file that's used to store a ton of different 
 	 * 	   types of information                                                   */
-    private void load(String filename){
+    private void loadLevelFile(String filename){
 		
 		BufferedReader filein = null;
 		BufferedImage tileSet = null;
@@ -350,16 +360,16 @@ public class LevelModel extends Model{
 		return modelController;
     }
 
-    public void addEnemyModel(EnemyModel em){
-	enemyModels.add(em);
+    public void activateEnemy(EnemyModel em){
+	activeEnemies.add(em);
     }
 	
-	public ArrayList<EnemyModel> getEnemyModels(){
-		return enemyModels;
+	public ArrayList<EnemyModel> getActiveEnemies(){
+		return activeEnemies;
 	}
     
     public ArrayList<Bullet> getEnemyBullets(){
-	return enemyBullets;
+	return activeBullets;
     }
     
     public ArrayList<Pickup> getLevelPickups(){

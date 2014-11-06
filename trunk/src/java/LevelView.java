@@ -50,12 +50,12 @@ public class LevelView extends View{
 	playerView.render(g2,rw,rh);
 	
 	this.enemyViews.clear();
-	for(int xx=0;xx<this.levelModel.getEnemyModels().size();xx++){
-	this.addEnemyView(new EnemyView(this.levelModel.getEnemyModels().get(xx)));
+	for(int xx=0;xx<this.levelModel.getActiveEnemies().size();xx++){
+	this.addEnemyView(new EnemyView(this.levelModel.getActiveEnemies().get(xx)));
 	}
 	
 	for(int xx=0;xx<this.enemyViews.size();xx++){
-	    if(this.enemyViews.get(xx).getEnemyModel().getDead() == true){
+	    if(this.enemyViews.get(xx).getEnemyModel().isDead() == true){
 		this.enemyViews.remove(xx);
 		xx--;
 	    }

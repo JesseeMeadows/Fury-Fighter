@@ -60,10 +60,9 @@ public abstract class EnemyModel extends Model{
     public int getHeight(){
 		return this.height;
     }
-    public boolean getDead(){
+    public boolean isDead(){
 		return this.dead;
 	}
-
 
 	public boolean shootBullet(){
 		return false;

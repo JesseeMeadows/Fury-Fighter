@@ -453,9 +453,9 @@ public class PlayerModel extends Model implements InputResponder{
 			Rectangle boundingBox = new Rectangle(getDefensePodXPos(),getDefensePodYPos(),defensePodImage.getWidth(),defensePodImage.getHeight());  // defense pod's hitbox
 
 			// determines if pod contacted and killed an enemy
-			for (int xx=0;xx<levelModel.getEnemyModels().size();xx++){
-				EnemyModel em = levelModel.getEnemyModels().get(xx);
-				if (Utils.boxCollision(em.getBoundingBox(),boundingBox)){
+			for (int i = 0; i < levelModel.getActiveEnemies().size(); i++) {
+				EnemyModel em = levelModel.getActiveEnemies().get(i);
+				if (Utils.boxCollision(em.getBoundingBox(), boundingBox)) {
 					em.kill();
 					score += ScoreTable.scoreForKilled(em);
 					Pickup[] p = em.getDrop();
@@ -511,8 +511,8 @@ public class PlayerModel extends Model implements InputResponder{
 				 * On contact: Damages/kills enemy and is deleted unless it's a ring bullet
 				 * On Kill: updates scoreboard, determines drop
 				 */
-				for (int yy = 0; yy < levelModel.getEnemyModels().size(); yy++) {
-					EnemyModel em = levelModel.getEnemyModels().get(xx);
+				for (int yy = 0; yy < levelModel.getActiveEnemies().size(); yy++) {
+					EnemyModel em = levelModel.getActiveEnemies().get(xx);
 					if (b.collidesWith(em.getBoundingBox())) {
 						boolean kill = em.hit(b.getPower());
 						if (kill == true) {
