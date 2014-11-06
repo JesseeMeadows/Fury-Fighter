@@ -116,7 +116,7 @@ public class LevelModel extends Model{
 	{
 		for (int i = 0; i < queuedEnemies.size(); i++) {
 			EnemyModel enemy = queuedEnemies.get(i);
-			boolean enemyCoordReached = distanceScrolled + ViewController.SCREEN_WIDTH > enemy.getXPos();			
+			boolean enemyCoordReached = distanceScrolled + ViewController.SCREEN_WIDTH > enemy.getXPos();		
 			
 			if (enemyCoordReached) {
 				activateEnemy(enemy);
@@ -130,7 +130,7 @@ public class LevelModel extends Model{
 	/** Removes dead enemies, updates living/active enemies, and creates enemy bullets*/
 	private void updateEnemies(float dt)
 	{
-		// for statement: 
+		// for statement:
 		for (int i = 0; i < activeEnemies.size(); i++) {
 			EnemyModel enemy = activeEnemies.get(i);
 
@@ -145,10 +145,10 @@ public class LevelModel extends Model{
 			    
 			    // Creates a bullet to travel from enemies position to players position(both positions in respect to time of roll)
 			    if (enemy.shootBullet()){                                                                 
-				Vector2 playerPos = new Vector2(playerModel.getXPos(),playerModel.getYPos());          // Obtains player's location to shoot towards that direction
-				Vector2 enemyPos = new Vector2(enemy.getXPos(),enemy.getYPos());							   // Obtains enemy position at time of shot
-				Vector2 dir = enemyPos.sub(playerPos);                                                 // Creates a vector for bullets travel during its life span
-				activeBullets.add(new EnemyBullet(enemy.xPos+(enemy.width/2),enemy.yPos+(enemy.height/2),dir));
+					Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());          // Obtains player's location to shoot towards that direction
+					Vector2 enemyPos = new Vector2(enemy.getXPos(), enemy.getYPos());							   // Obtains enemy position at time of shot
+					Vector2 dir = enemyPos.sub(playerPos);                                       // Creates a vector for bullets travel during its life span
+					activeBullets.add(new EnemyBullet(enemy.xPos + (enemy.width / 2), enemy.yPos + (enemy.height / 2), dir));
 			    }
 				
 			    // Player dies if he collides with enemy
@@ -185,7 +185,7 @@ public class LevelModel extends Model{
 			levelPickups.get(i).update(dt, scrollDelta);
 		}
 	}
-	
+
 	// Destroys all enemies and their bullets on screen
 	public void cobaltBomb()
 	{
@@ -231,53 +231,52 @@ public class LevelModel extends Model{
 	/* This function takes a LevelMap which is stored in a JSON file and loads it
 	 * --- A JSON file is basically a file that's used to store a ton of different 
 	 * 	   types of information                                                   */
-    private void loadLevelFile(String filename){
+	private void loadLevelFile(String filename)
+	{
 		
 		BufferedReader filein = null;
 		BufferedImage tileSet = null;
-		
-		try{
+
+		try {
 			filein = new BufferedReader(new FileReader(filename));
 			String linein;
 			String json = "";
-			while((linein = filein.readLine())!= null){
+			while ((linein = filein.readLine()) != null) {
 				json = json + linein;
 			}
 			// Parses the Level json file into a JSON object to prepare for splitting the data between attributes
-			JSONObject jsonObject = (JSONObject)JSONValue.parse(json);
+			JSONObject jsonObject = (JSONObject) JSONValue.parse(json);
+
+			tileMapHeight = ((Number) jsonObject.get("height")).intValue();
+			tileMapWidth = ((Number) jsonObject.get("width")).intValue();
+			tileWidth = ((Number) jsonObject.get("tilewidth")).intValue();
+			tileHeight = ((Number) jsonObject.get("tileheight")).intValue();
+
+			JSONArray tilesets = (JSONArray) jsonObject.get("tilesets");
+			JSONObject tilesetsInfo = (JSONObject) tilesets.get(0);       // "firstgid:1"
+			String tileMapFile = (String) tilesetsInfo.get("image");     // gets location of tileset.png
 			
-			tileMapHeight = ((Number)jsonObject.get("height")).intValue();   
-			tileMapWidth = ((Number)jsonObject.get("width")).intValue();     
-			tileWidth = ((Number)jsonObject.get("tilewidth")).intValue();
-			tileHeight = ((Number)jsonObject.get("tileheight")).intValue();
-			
-			
-			JSONArray tilesets = (JSONArray)jsonObject.get("tilesets");
-			JSONObject tilesetsInfo = (JSONObject)tilesets.get(0);       // "firstgid:1"
-			String tileMapFile = (String)tilesetsInfo.get("image");      // gets location of tileset.png
-			
-			tileSet = ImageIO.read(new File("assets/"+tileMapFile));
-		  
+			tileSet = ImageIO.read(new File("assets/" + tileMapFile));
+
 			int rows = tileSet.getHeight() / tileHeight;
 			int cols = tileSet.getWidth() / tileWidth;
 			
 			// Loads each individual tile of the tileset file into the buffer to be quickly 
 			// reference when setting up the level
 			tileImages = new BufferedImage[rows * cols];
-			for(int yy = 0; yy < rows; yy++){
-				for(int xx = 0; xx < cols; xx++){
+			for (int yy = 0; yy < rows; yy++) {
+				for (int xx = 0; xx < cols; xx++) {
 					tileImages[yy * rows + xx] = tileSet.getSubimage(xx * tileWidth, yy * tileHeight, tileWidth, tileHeight);
 				}
 			}
-
 			
-			JSONArray layersArray = (JSONArray)jsonObject.get("layers");
-			JSONObject backgroundLayer = (JSONObject)layersArray.get(0);
+			JSONArray layersArray = (JSONArray) jsonObject.get("layers");
+			JSONObject backgroundLayer = (JSONObject) layersArray.get(0);
 			
-			JSONArray mapData = (JSONArray)backgroundLayer.get("data");    // gets data array(line:4 in testlevel)
-			tileMap = new int[mapData.size()];							   // gets data array's size
-			for(int xx = 0; xx < tileMap.length; xx++){                    // Loads the data array into memory
-				tileMap[xx] = ((Number)mapData.get(xx)).intValue();		   // ^^^
+			JSONArray mapData = (JSONArray) backgroundLayer.get("data");    // gets data array(line:4 in testlevel)
+			tileMap = new int[mapData.size()];						   // gets data array's size
+			for (int xx = 0; xx < tileMap.length; xx++) {                   // Loads the data array into memory
+				tileMap[xx] = ((Number) mapData.get(xx)).intValue();	   // ^^^
 			}
 			/* The data array is basically the level map that's created from using the tiles in
 			 * the tileset.png file. Each entry in "data" references which tile from the tileset goes
@@ -292,43 +291,43 @@ public class LevelModel extends Model{
 			 */
 			
 			// Loads all enemies and items into queues (currently only speed-pod and enemy-flyer in test level JSON file)
-			JSONObject objectLayer = (JSONObject)layersArray.get(1);
-			JSONArray objectList = (JSONArray)objectLayer.get("objects");
+			JSONObject objectLayer = (JSONObject) layersArray.get(1);
+			JSONArray objectList = (JSONArray) objectLayer.get("objects");
 			for (int xx = 0; xx < objectList.size(); xx++) {
 				JSONObject object = (JSONObject) objectList.get(xx);
-				
-				if(((String)object.get("type")) =="enemy-flyer"){
-					queuedEnemies.add((EnemyModel)new FlyerModel(((Number)object.get("x")).intValue(),((Number)object.get("y")).intValue()));
+
+				if (((String) object.get("type")) == "enemy-flyer") {
+					queuedEnemies.add((EnemyModel) new FlyerModel(((Number) object.get("x")).intValue(), ((Number) object.get("y")).intValue()));
 				}
-				
-				if(((String)object.get("type")) =="speed-pod"){
-					levelPickups.add(new Pickup(((Number)object.get("x")).intValue(),((Number)object.get("y")).intValue(),"speed","assets/speedPickupImage.png"));
+
+				if (((String) object.get("type")) == "speed-pod") {
+					levelPickups.add(new Pickup(((Number) object.get("x")).intValue(), ((Number) object.get("y")).intValue(), "speed", "assets/speedPickupImage.png"));
 				}
-				
-				if(((String)object.get("type")) == "defense-pod"){
-					levelPickups.add(new Pickup(((Number)object.get("x")).intValue(),((Number)object.get("y")).intValue(),"defense_pod","assets/defensePodImage.png"));
+
+				if (((String) object.get("type")) == "defense-pod") {
+					levelPickups.add(new Pickup(((Number) object.get("x")).intValue(), ((Number) object.get("y")).intValue(), "defense_pod", "assets/defensePodImage.png"));
 				}
 				
 				
 			}
 		} // - end try
-		catch(FileNotFoundException e){
+		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		catch(IOException e){
+		catch (IOException e) {
 			e.printStackTrace();
 		}
-		finally{
+		finally {
 			if (filein != null) {
-			try {
-				filein.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
+				try {
+					filein.close();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-    }
+	}
 
     public int getScrollDistance(){
 		return (int)distanceScrolled;

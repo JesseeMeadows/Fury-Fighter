@@ -13,18 +13,18 @@ public class GameOverModel extends Model implements InputResponder{
 	private int choice;
 	private BufferedImage cursor;
 
-	public GameOverModel(ModelController m){
+	public GameOverModel(ModelController m) {
 		this.modelController = m;
 		m.getViewController().getDrawPanel().getInputHandler().registerInputResponder(this);
-		this.choice = 0;
-		
-		try{
-			this.cursor = ImageIO.read(new File("assets/flyer.png"));
+		choice = 0;
+
+		try {
+			cursor = ImageIO.read(new File("assets/flyer.png"));
 		}
-		catch(IOException e){
+		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 	
 	public HashMap<String,Model> getVisibleModels(){
@@ -41,7 +41,7 @@ public class GameOverModel extends Model implements InputResponder{
 
 	public void keyUpResponse(KeyEvent e){
 		if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN){
-			this.choice = 1 - this.choice;
+			choice = 1 - choice;
 			SoundManager.get().playSound("interface");
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
