@@ -10,7 +10,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestEnemyBullet.class,
 		TestInputResponder.class,
 		TestScoreTable.class,		
-		TestInputHandler.class
+		TestInputHandler.class,
+		TestSplashModel.class
 
 })
 public class TestAllSuite {}
