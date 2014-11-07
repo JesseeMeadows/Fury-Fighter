@@ -18,7 +18,7 @@ public class TestSplashModel {
 	}
 	
 	@Test
-	public void TestUpdate() 
+	public void testUpdate() 
 	{
 		// Nothing should update until 5(000ms) seconds
 		splashModel.update(1000);		

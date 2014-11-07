@@ -43,7 +43,7 @@ public class TestInputHandler extends Component {
 	}
 	
 	@Test
-	public void TestRegisterInputResponder() {
+	public void testRegisterInputResponder() {
 		assertFalse(isRegistered);
 		
 		inputHandler.registerInputResponder(inputSample);
@@ -52,7 +52,7 @@ public class TestInputHandler extends Component {
 	}
 	
 	@Test
-	public void TestUnregisterInputResponder() {
+	public void testUnregisterInputResponder() {
 		// Register
 		inputHandler.registerInputResponder(inputSample);
 		inputHandler.keyDownResponse(new KeyEvent(this, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_X, testKey));		

@@ -7,61 +7,79 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 
-public class TitleModel extends Model implements InputResponder{
+public class TitleModel extends Model implements InputResponder {
 
-	private ModelController modelController;
-	private int choice;
+	private ModelController modelController;	
 	private BufferedImage titleImage;
 	private BufferedImage cursor;
+	private int choice;
 
-	public TitleModel(ModelController m){
-		this.modelController = m;
-		m.getViewController().getDrawPanel().getInputHandler().registerInputResponder(this);
-		this.choice = 0;
-		
-		try{
-			this.titleImage = ImageIO.read(new File("assets/title.png"));
-			this.cursor = ImageIO.read(new File("assets/flyer.png"));
+	public TitleModel(ModelController theModelController) {
+		modelController = theModelController;		
+		choice = 0;		
+		registerTitleInput();
+
+		try {
+			titleImage = ImageIO.read(new File("assets/title.png"));
+			cursor = ImageIO.read(new File("assets/flyer.png"));
 		}
-		catch(IOException e){
+		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 	
-	public HashMap<String,Model> getVisibleModels(){
-		return new HashMap<String,Model>();
-    }
-	
-	public int update(float dt){
+
+	public int update(float dt) {
 		return 0;
 	}
-	
-	public void keyDownResponse(KeyEvent e){
+
+	public void keyDownResponse(KeyEvent e) {
 		return;
 	}
 
-	public void keyUpResponse(KeyEvent e){
-		if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN){
-			this.choice = 1 - this.choice;
+	public void keyUpResponse(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
+			choice = 1 - choice;
 			SoundManager.get().playSound("interface");
 		}
-		if(e.getKeyCode() == KeyEvent.VK_ENTER){
-			if(this.choice == 0){
-				this.modelController.getViewController().getDrawPanel().getInputHandler().unregisterInputResponder(this);
-				this.modelController.setMainModel(new LevelModel(this.modelController));
-				this.modelController.getViewController().setMainView(new LevelView(this.modelController.getViewController()));
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			if (choice == 0) {
+				unregisterTitleInput();
+				setLevelModel();
+				setLevelView();
 			}
 		}
 	}
-		
-	public BufferedImage getTitleImage(){
-		return this.titleImage;
+	
+	private void registerTitleInput() {
+		modelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(this);
 	}
-	public BufferedImage getCursor(){
-		return this.cursor;
+	private void unregisterTitleInput() {
+		modelController.getViewController().getDrawPanel().getInputHandler().unregisterInputResponder(this);
 	}
-	public int getChoice(){
-		return this.choice;
+
+	private void setLevelModel() {
+		modelController.setMainModel(new LevelModel(modelController));
+	}
+
+	private void setLevelView() {
+		modelController.getViewController().setMainView(new LevelView(modelController.getViewController()));
+	}
+
+	public BufferedImage getTitleImage() {
+		return titleImage;
+	}
+
+	public BufferedImage getCursor() {
+		return cursor;
+	}
+
+	public int getChoice() {
+		return choice;
+	}
+	
+	public HashMap<String, Model> getVisibleModels() {
+		return new HashMap<String, Model>();
 	}
 }
