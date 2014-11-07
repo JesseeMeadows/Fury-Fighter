@@ -12,7 +12,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestScoreTable.class,		
 		TestInputHandler.class,
 		TestSplashModel.class,
-		TestTitleModel.class
+		TestTitleModel.class,
+		TestGameOverModel.class
 
 })
 public class TestAllSuite {}

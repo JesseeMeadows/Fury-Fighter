@@ -13,9 +13,9 @@ public class GameOverModel extends Model implements InputResponder{
 	private int choice;
 	private BufferedImage cursor;
 
-	public GameOverModel(ModelController m) {
-		this.modelController = m;
-		m.getViewController().getDrawPanel().getInputHandler().registerInputResponder(this);
+	public GameOverModel(ModelController theModelController) {
+		modelController = theModelController;
+		registerGameoverInput();
 		choice = 0;
 
 		try {
@@ -25,11 +25,7 @@ public class GameOverModel extends Model implements InputResponder{
 			e.printStackTrace();
 		}
 
-	}
-	
-	public HashMap<String,Model> getVisibleModels(){
-		return new HashMap<String,Model>();
-    }
+	}	
 	
 	public int update(float dt){
 		return 0;
@@ -40,27 +36,60 @@ public class GameOverModel extends Model implements InputResponder{
 	}
 
 	public void keyUpResponse(KeyEvent e){
-		if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN){
+		if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
 			choice = 1 - choice;
 			SoundManager.get().playSound("interface");
 		}
-		if(e.getKeyCode() == KeyEvent.VK_ENTER){
-			if(this.choice == 0){
-				this.modelController.getViewController().getDrawPanel().getInputHandler().unregisterInputResponder(this);
-				this.modelController.setMainModel(new LevelModel(this.modelController));
-				this.modelController.getViewController().setMainView(new LevelView(this.modelController.getViewController()));
+
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			// Restart Level
+			if (choice == 0) {
+				unregisterGameoverInput();
+				setLevelModel();
+				setLevelView();
 			}
-			else{
-				this.modelController.getViewController().getDrawPanel().getInputHandler().unregisterInputResponder(this);
-				this.modelController.setMainModel(new TitleModel(this.modelController));
-				this.modelController.getViewController().setMainView(new TitleView(this.modelController.getViewController()));
+			// Goto Title Screen
+			else {
+				unregisterGameoverInput();
+				setTitleModel();
+				setTitleView();
 			}
 		}
 	}
-	public BufferedImage getCursor(){
-		return this.cursor;
+	
+	private void registerGameoverInput() {
+		modelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(this);
 	}
-	public int getChoice(){
-		return this.choice;
+	
+	private void unregisterGameoverInput() {
+		modelController.getViewController().getDrawPanel().getInputHandler().unregisterInputResponder(this);
+	}
+	
+	private void setLevelModel() {
+		modelController.setMainModel(new LevelModel(modelController));
+	}
+	
+	private void setTitleView() {
+		modelController.getViewController().setMainView(new TitleView(modelController.getViewController()));
+	}
+	
+	private void setTitleModel() {
+		modelController.setMainModel(new TitleModel(modelController));
+	}
+
+	private void setLevelView() {
+		modelController.getViewController().setMainView(new LevelView(modelController.getViewController()));
+	}
+
+	public BufferedImage getCursor() {
+		return cursor;
+	}
+
+	public int getChoice() {
+		return choice;
+	}
+
+	public HashMap<String, Model> getVisibleModels() {
+		return new HashMap<String, Model>();
 	}
 }

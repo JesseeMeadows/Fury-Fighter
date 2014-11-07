@@ -32,24 +32,22 @@ public class TestTitleModel extends Component {
 		assertFalse(viewController.getMainView() instanceof LevelView);	
 		
 		// Send up arrow Key
-		titleModel.keyUpResponse(
-				new KeyEvent(this, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 
-									 0, KeyEvent.VK_UP, (char)KeyEvent.VK_UP));
-		
+		sendKeyRelease(KeyEvent.VK_UP);		
 		assertFalse(modelController.getMainModel() instanceof LevelModel);
 		assertFalse(viewController.getMainView() instanceof LevelView);	
 		
 		// Reposition cursor to "START"
-		titleModel.keyUpResponse(
-				new KeyEvent(this, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 
-									 0, KeyEvent.VK_UP, (char)KeyEvent.VK_UP));		
-		// Send ENTER key
-		titleModel.keyUpResponse(
-				new KeyEvent(this, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 
-									 0, KeyEvent.VK_ENTER, (char)KeyEvent.VK_ENTER));		
+		sendKeyRelease(KeyEvent.VK_UP);
 		
+		// Enter to start Game
+		sendKeyRelease(KeyEvent.VK_ENTER);		
 		assertTrue(modelController.getMainModel() instanceof LevelModel);
-		assertTrue(viewController.getMainView() instanceof LevelView);		
+		assertTrue(viewController.getMainView() instanceof LevelView);
+	}
+	
+	private void sendKeyRelease(int KeyCode) {
+		titleModel.keyUpResponse( new KeyEvent(this, KeyEvent.KEY_RELEASED, 
+				   System.currentTimeMillis(), 0, KeyCode, (char)KeyCode));
 	}
 
 }
