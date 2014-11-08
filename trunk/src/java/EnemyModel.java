@@ -9,7 +9,7 @@ public abstract class EnemyModel extends Model{
 	protected int xPos;
 	protected int yPos;
 
-	// enemies size(boxed) -- used in conjunction with x and y position to get enmemies bounding box
+	// enemies size(boxed) -- used in conjunction with x and y position to get enemies bounding box
 	protected int width;
 	protected int height;
 

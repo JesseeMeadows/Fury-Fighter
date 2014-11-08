@@ -13,7 +13,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestInputHandler.class,
 		TestSplashModel.class,
 		TestTitleModel.class,
-		TestGameOverModel.class
+		TestGameOverModel.class,
+		TestRingBullet.class
 
 })
 public class TestAllSuite {}

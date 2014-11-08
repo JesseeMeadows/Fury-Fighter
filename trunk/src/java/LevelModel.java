@@ -296,15 +296,15 @@ public class LevelModel extends Model{
 			for (int xx = 0; xx < objectList.size(); xx++) {
 				JSONObject object = (JSONObject) objectList.get(xx);
 
-				if (((String) object.get("type")) == "enemy-flyer") {
+				if (((String) object.get("type")).equals("enemy-flyer")) {
 					queuedEnemies.add((EnemyModel) new FlyerModel(((Number) object.get("x")).intValue(), ((Number) object.get("y")).intValue()));
 				}
 
-				if (((String) object.get("type")) == "speed-pod") {
+				if (((String) object.get("type")).equals("speed-pod")) {
 					levelPickups.add(new Pickup(((Number) object.get("x")).intValue(), ((Number) object.get("y")).intValue(), "speed", "assets/speedPickupImage.png"));
 				}
 
-				if (((String) object.get("type")) == "defense-pod") {
+				if (((String) object.get("type")).equals("defense-pod")) {
 					levelPickups.add(new Pickup(((Number) object.get("x")).intValue(), ((Number) object.get("y")).intValue(), "defense_pod", "assets/defensePodImage.png"));
 				}
 				
