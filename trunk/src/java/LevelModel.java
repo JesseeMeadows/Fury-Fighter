@@ -7,10 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.File;
-
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.JSONArray;
@@ -23,53 +19,60 @@ import java.lang.Number;
 
 public class LevelModel extends Model{
     
-    private PlayerModel playerModel;
+    private PlayerModel     playerModel;
     private ModelController modelController;
+    private JSONObject      levelFile;
 
-    private int tileMapWidth;      // Width of map  : tile units
-    private int tileMapHeight;	   // Height of map : tile units
-    private int tileWidth;		   // Width of tile : pixel units
-    private int tileHeight;		   // Height of tile: pixel units
-    private int mapWidthInPixels;  //
+    
+    private TileMap tileMap;
+    private int mapWidthInPixels; 
+
 
     private float distanceScrolled;  // Total distance scrolled from beginning: pixel units
-    private float scrollVelocity;    // 
-    private int scrollDelta;         // Distance scrolled the previous frame
+    private float scrollVelocity;    // Speed screen scrolls
+    private int   scrollDelta;         // Distance scrolled the previous frame
     
-    private BufferedImage[] tileImages;
-    private int[] tileMap;
     
-    private ArrayList<EnemyModel> activeEnemies;     // Contains each enemy model that's currently active
+    
+    private ArrayList<EnemyModel> activeEnemies;   // Contains each enemy model that's currently active
     private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active
-    private ArrayList<Bullet> activeBullets;        // Contains active enemy bullets on screen
-    private ArrayList<Pickup> levelPickups;        // Contains active enemy drops on screen
+    private ArrayList<Bullet>     activeBullets;   // Contains active enemy bullets on screen
+    private ArrayList<Pickup>     levelPickups;    // Contains active enemy drops on screen
+
+
 
     public boolean paused;
 	
     private MillisecTimer deathTimer;
 	
-    LevelModel(ModelController model){
-		modelController = model;
-		playerModel = new PlayerModel(this);
-		model.getViewController().getDrawPanel().getInputHandler().registerInputResponder(playerModel);
+    LevelModel(ModelController theModelController, String fileLocation){
+		modelController = theModelController;
+		levelFile = loadToJson(fileLocation);
+		tileMap = new TileMap(levelFile);
+		playerModel = new PlayerModel(this, tileMap);
+		theModelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(playerModel);
+		
+		
 		
 		distanceScrolled = 0.0f;
 		scrollVelocity = 0.05f;
-		scrollDelta = 0;
-		
-		
-		loadLevelFile("assets/test_level.json");
-		
+		scrollDelta = 0;		
+				
 		queuedEnemies = new ArrayList<EnemyModel>();
 		activeEnemies = new ArrayList<EnemyModel>();
 		activeBullets = new ArrayList<Bullet>();
-		levelPickups = new ArrayList<Pickup>();
+		levelPickups  = new ArrayList<Pickup>();
+		
+		// Retrieves Enemies, pickups, and tileMap
+		loadObjects(levelFile, queuedEnemies, levelPickups);
 		
 		paused = false;
 		
 		deathTimer = null;
 		
 		SoundManager.get().playSound("music");
+		
+		mapWidthInPixels = tileMap.getTileMapWidth() * tileMap.getTileWidth();
 		
     }
 
@@ -99,7 +102,7 @@ public class LevelModel extends Model{
 	 * the enemies off screen to ensure their appearance is natural -- flyer's width is 32 pixels */
 	private void mapScroll(float dt)
 	{
-		boolean endOfLevel = distanceScrolled < mapWidthInPixels - (ViewController.SCREEN_WIDTH + 33);
+		boolean endOfLevel = distanceScrolled >= mapWidthInPixels - (ViewController.SCREEN_WIDTH + 33);
 				
 		if (!endOfLevel) {
 			// Scroll right
@@ -231,86 +234,18 @@ public class LevelModel extends Model{
 	/* This function takes a LevelMap which is stored in a JSON file and loads it
 	 * --- A JSON file is basically a file that's used to store a ton of different 
 	 * 	   types of information                                                   */
-	private void loadLevelFile(String filename)
-	{
-		
+	
+	private JSONObject loadToJson(String filename) {
 		BufferedReader filein = null;
-		BufferedImage tileSet = null;
-
+		String linein;
+		String json = "";
+		
 		try {
 			filein = new BufferedReader(new FileReader(filename));
-			String linein;
-			String json = "";
 			while ((linein = filein.readLine()) != null) {
 				json = json + linein;
 			}
-			// Parses the Level json file into a JSON object to prepare for splitting the data between attributes
-			JSONObject jsonObject = (JSONObject) JSONValue.parse(json);
-
-			tileMapHeight = ((Number) jsonObject.get("height")).intValue();
-			tileMapWidth = ((Number) jsonObject.get("width")).intValue();
-			tileWidth = ((Number) jsonObject.get("tilewidth")).intValue();
-			tileHeight = ((Number) jsonObject.get("tileheight")).intValue();
-
-			JSONArray tilesets = (JSONArray) jsonObject.get("tilesets");
-			JSONObject tilesetsInfo = (JSONObject) tilesets.get(0);       // "firstgid:1"
-			String tileMapFile = (String) tilesetsInfo.get("image");     // gets location of tileset.png
-			
-			tileSet = ImageIO.read(new File("assets/" + tileMapFile));
-
-			int rows = tileSet.getHeight() / tileHeight;
-			int cols = tileSet.getWidth() / tileWidth;
-			
-			// Loads each individual tile of the tileset file into the buffer to be quickly 
-			// reference when setting up the level
-			tileImages = new BufferedImage[rows * cols];
-			for (int yy = 0; yy < rows; yy++) {
-				for (int xx = 0; xx < cols; xx++) {
-					tileImages[yy * rows + xx] = tileSet.getSubimage(xx * tileWidth, yy * tileHeight, tileWidth, tileHeight);
-				}
-			}
-			
-			JSONArray layersArray = (JSONArray) jsonObject.get("layers");
-			JSONObject backgroundLayer = (JSONObject) layersArray.get(0);
-			
-			JSONArray mapData = (JSONArray) backgroundLayer.get("data");    // gets data array(line:4 in testlevel)
-			tileMap = new int[mapData.size()];						   // gets data array's size
-			for (int xx = 0; xx < tileMap.length; xx++) {                   // Loads the data array into memory
-				tileMap[xx] = ((Number) mapData.get(xx)).intValue();	   // ^^^
-			}
-			/* The data array is basically the level map that's created from using the tiles in
-			 * the tileset.png file. Each entry in "data" references which tile from the tileset goes
-			 * to that particular location on the level's map(tilemap).
-			 * Quick Breakdown(test level):
-			 * 		tileMapHeight = 14     -- since there's 14 vertical tiles of gameplay, with the other 2 used for the gui
-			 * 		tileMapWidth = 160     -- you only see 16 at a time(scrolls through them all eventually)
-			 * 		tilemap Height * tileMapWidth = 14 * 160 = 2240 total tiles to represent the level's map(tileMap)
-			 * 
-			 * 		Thus the data array in the json file, which is loaded into mapData, is of size 2240, with each entry
-			 * 		referencing the tile that goes to that particular position of the level's map(as previously stated).			 * 		
-			 */
-			
-			// Loads all enemies and items into queues (currently only speed-pod and enemy-flyer in test level JSON file)
-			JSONObject objectLayer = (JSONObject) layersArray.get(1);
-			JSONArray objectList = (JSONArray) objectLayer.get("objects");
-			for (int xx = 0; xx < objectList.size(); xx++) {
-				JSONObject object = (JSONObject) objectList.get(xx);
-
-				if (((String) object.get("type")).equals("enemy-flyer")) {
-					queuedEnemies.add((EnemyModel) new FlyerModel(((Number) object.get("x")).intValue(), ((Number) object.get("y")).intValue()));
-				}
-
-				if (((String) object.get("type")).equals("speed-pod")) {
-					levelPickups.add(new Pickup(((Number) object.get("x")).intValue(), ((Number) object.get("y")).intValue(), "speed", "assets/speedPickupImage.png"));
-				}
-
-				if (((String) object.get("type")).equals("defense-pod")) {
-					levelPickups.add(new Pickup(((Number) object.get("x")).intValue(), ((Number) object.get("y")).intValue(), "defense_pod", "assets/defensePodImage.png"));
-				}
-				
-				
-			}
-		} // - end try
+		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -327,33 +262,24 @@ public class LevelModel extends Model{
 				}
 			}
 		}
-	}
+		
+		return (JSONObject) JSONValue.parse(json);
+	}		
 
-    public int getScrollDistance(){
+    public int getDistanceScrolled(){
 		return (int)distanceScrolled;
     }
+    
     public int getScrollDelta(){
 	return scrollDelta;
     }
 	    
-    public int[] getTileMap(){
+    public TileMap getTileMap(){
 		return tileMap;
     }
-    public BufferedImage getTileImage(int idx){
-		return tileImages[idx];
-    }
-    public int getTileMapWidth(){
-		return tileMapWidth;
-    }
-    public int getTileMapHeight(){
-		return tileMapHeight;
-    }
-    public int getTileWidth(){
-		return tileWidth;
-    }
-    public int getTileHeight(){
-		return tileHeight;
-    }
+//    public BufferedImage getTileImage(int idx){
+//		return tileImages[idx];
+//    }   
 
     public ModelController getModelController(){
 		return modelController;
@@ -380,4 +306,45 @@ public class LevelModel extends Model{
 		rv.put("playerModel",playerModel);
 		return rv;
     }
+    
+//    public BufferedImage compileTileMap(int[] tileReferences, TileSet tileset) {
+//    	int tileWidth  = tileset.getTileWidth();
+//    	int tileHeight = tileset.getTileHeight();
+//    	int tileMapWidth  = tileset.getTileMapWidth();
+//    	int tileMapHeight = tileset.getTileMapHeight(); 
+//    	
+//    	BufferedImage tileMap = new BufferedImage()
+//    }
+
+    private void loadObjects(JSONObject levelFile, ArrayList<EnemyModel> enemyQueue, ArrayList<Pickup> pickupQueue) {
+    	String objectType;
+
+    	JSONArray layersArray = (JSONArray) levelFile.get("layers");
+		JSONObject objectLayer = (JSONObject) layersArray.get(1);
+		JSONArray objectList = (JSONArray) objectLayer.get("objects");
+
+			for (int i = 0; i < objectList.size(); i++) {
+				// Retrieve Object
+				JSONObject object = (JSONObject) objectList.get(i);
+				objectType = (String) (object.get("type"));
+
+				if (objectType == "enemy-flyer") {
+					enemyQueue.add((EnemyModel) new FlyerModel( ((Number) object.get("x")).intValue(), 
+																   ((Number) object.get("y")).intValue()));
+				}
+				else if (objectType == "speed-pod") {
+					pickupQueue.add(new Pickup( ((Number) object.get("x")).intValue(),
+											     ((Number) object.get("y")).intValue(), 
+											     "speed", "assets/speedPickupImage.png"));
+				}
+				else if (objectType == "defense-pod") {
+					pickupQueue.add(new Pickup( ((Number) object.get("x")).intValue(), 
+								   				 ((Number) object.get("y")).intValue(), 
+								   				  "defense_pod", "assets/defensePodImage.png"));
+				}
+				
+				
+			}
+    }
+    
 }

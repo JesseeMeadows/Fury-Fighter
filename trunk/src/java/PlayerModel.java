@@ -1,6 +1,7 @@
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import java.awt.image.BufferedImage;
 import java.awt.Rectangle;
@@ -55,8 +56,9 @@ public class PlayerModel extends Model implements InputResponder {
 	private BulletType bulletType;
 
 	private LevelModel levelModel;
+	private TileMap tileMap;
 
-	PlayerModel(LevelModel levelModel) {
+	PlayerModel(LevelModel levelModel, TileMap tileMap) {
 
 		// No buttons pressed on player creation
 		upDown = false;
@@ -117,6 +119,7 @@ public class PlayerModel extends Model implements InputResponder {
 
 		curFrame = 2;
 		this.levelModel = levelModel;
+		this.tileMap = tileMap;
 		// levelModel.getModelController().getViewController().getDrawPanel().getInputHandler().registerInputResponder(this);
 	}
 
@@ -133,8 +136,8 @@ public class PlayerModel extends Model implements InputResponder {
 		ArrayList<Integer> onTiles = new ArrayList<Integer>();
 
 		// Tile size in pixels
-		int tileWidth = levelModel.getTileWidth();
-		int tileHeight = levelModel.getTileHeight();
+		int tileWidth = tileMap.getTileWidth();
+		int tileHeight = tileMap.getTileHeight();
 
 		int coverWide = 1;
 		int coverHigh = 1;
@@ -158,15 +161,15 @@ public class PlayerModel extends Model implements InputResponder {
 		}
 
 		// Obtains upper-left tile that the character sprite is currently on
-		int tileCoordX = (xPos + levelModel.getScrollDistance()) / tileWidth;
+		int tileCoordX = (xPos + levelModel.getDistanceScrolled()) / tileWidth;
 		int tileCoordY = yPos / tileHeight;
 
 		// Obtains all tiles character is currently touching
-		for (int yy = 0; yy < coverHigh; yy++) {
-			for (int xx = 0; xx < coverWide; xx++) {
+		for (int y = 0; y < coverHigh; y++) {
+			for (int x = 0; x < coverWide; x++) {
 				// adds the different types of tiles that the character is
 				// touching to the return list(references technically)
-				onTiles.add(levelModel.getTileMap()[((tileCoordY + yy) * levelModel.getTileMapWidth()) + (tileCoordX + xx)]);
+				 onTiles.add(tileMap.getTile( ((tileCoordY + y) * tileMap.getTileMapWidth()) + (tileCoordX + x))  );
 			}
 		}
 		return onTiles;
@@ -343,36 +346,35 @@ public class PlayerModel extends Model implements InputResponder {
 		xPos += deltaX;
 		ArrayList<Integer> tiles = onTiles();
 
-		// ////////////////Corrected////////////////////////////////////////////////////////////
+		
 
 		// Ensures player doesn't move horizontally through solid object tiles
-		for (int xx = 0; xx < tiles.size(); xx++) {
-			if (tiles.get(xx) < 17 || tiles.get(xx) > 23) {
-				xPos = oldX - levelModel.getScrollDelta();
+		for (int i = 0; i < tiles.size(); i++) {
+			if (tiles.get(i) < 17 || tiles.get(i) > 23) {
+				xPos = oldX;              
 			}
 		}
 
 		// Ensures player doesn't move vertically through solid object tiles
 		yPos += deltaY;
 		tiles = onTiles();
-		for (int xx = 0; xx < tiles.size(); xx++) {
-			if (tiles.get(xx) < 17 || tiles.get(xx) > 23) {
+		for (int i = 0; i < tiles.size(); i++) {
+			if (tiles.get(i) < 17 || tiles.get(i) > 23) {
 				yPos = oldY;
 			}
-		}
-		// /////////////////////////////////////////////////////////////////////////////////////
+		}		
 
 		// Restricts player from moving off left side of screen
 		if (xPos < 0) xPos = 0;
 
 		// Restricts player from moving off right side of screen
-		if (xPos > levelModel.getModelController().getViewController().SCREEN_WIDTH - spriteWidth) xPos = levelModel.getModelController().getViewController().SCREEN_WIDTH - spriteWidth;
+		if (xPos > ViewController.SCREEN_WIDTH - spriteWidth) xPos = ViewController.SCREEN_WIDTH - spriteWidth;
 
 		// Restricts player from moving off north side of screen
 		if (yPos < 0) yPos = 0;
 
 		// Restricts player from moving off south side of screen
-		if (yPos > levelModel.getModelController().getViewController().SCREEN_HEIGHT - spriteHeight) yPos = levelModel.getModelController().getViewController().SCREEN_HEIGHT - spriteHeight;
+		if (yPos > ViewController.SCREEN_HEIGHT - spriteHeight) yPos = ViewController.SCREEN_HEIGHT - spriteHeight;
 
 		// Checks if player collides with any pickups
 		for (int xx = 0; xx < levelModel.getLevelPickups().size(); xx++) {
@@ -408,19 +410,21 @@ public class PlayerModel extends Model implements InputResponder {
 			}
 		}
 		// Updates bullet: position, enemy damaged/killed, off-screen(expires)
-		for (int xx = 0; xx < bulletList.size(); xx++) {
+		for (Iterator<Bullet> iterator = bulletList.iterator(); iterator.hasNext();) {
+			Bullet bullet = iterator.next();
 			// removes off-screen bullets
-			if (bulletList.get(xx).shouldDelete()) {
-				bulletList.remove(xx);
+			if (bullet.shouldDelete()) {
+				iterator.remove();
 			}
 
 			else {
-				Bullet b = bulletList.get(xx);
-				b.update(dt);
+				
+				bullet.update(dt);
 
-				Rectangle boundingBox = b.getBoundingBox();
+				Rectangle boundingBox = bullet.getBoundingBox();
 				int tileCoordX;
 				int tileCoordY;
+				int tile;
 				boolean deleted = false;
 				
 				/*
@@ -431,23 +435,23 @@ public class PlayerModel extends Model implements InputResponder {
 				 * 1-4 A bullet expires on contact with a solid object(besides
 				 * ring bullets)
 				 */
-				for (double yy = boundingBox.getY(); yy < boundingBox.getY() + boundingBox.getHeight() + 1; yy += boundingBox.getHeight()) {
-					for (double zz = boundingBox.getX(); zz < boundingBox.getX() + boundingBox.getWidth() + 1; zz += boundingBox.getWidth()) {
-						tileCoordX = ((int) zz + levelModel.getScrollDistance()) / levelModel.getTileWidth();
-						tileCoordY = (int) yy / levelModel.getTileHeight();
-						int tile = 20;
+				for (int y = bullet.yPos; y < bullet.yPos + boundingBox.getHeight(); y += boundingBox.getHeight()) {
+				for (int x = bullet.xPos; x < bullet.xPos + boundingBox.getWidth(); x += boundingBox.getWidth()) {
+						tileCoordX = (x + levelModel.getDistanceScrolled()) / tileMap.getTileWidth();
+						tileCoordY = y / tileMap.getTileHeight();
+						
 
 						// flags bullet to be deleted if it contacts solid tile(besides ring bullets)
-						tile = levelModel.getTileMap()[((tileCoordY) * levelModel.getTileMapWidth()) + (tileCoordX)];
+						tile = tileMap.getTile(((tileCoordY) * tileMap.getTileMapWidth()) + (tileCoordX));
 						if (tile < 17 || tile > 23) {
-							if (!(b instanceof RingBullet))
+							if (!(bullet instanceof RingBullet))
 								deleted = true;
 						}
 
 					}
 				}
 				if (deleted) {
-					bulletList.remove(xx);
+					iterator.remove();
 					continue;
 				}
 				/*
@@ -455,14 +459,14 @@ public class PlayerModel extends Model implements InputResponder {
 				 * contact: Damages/kills enemy and is deleted unless it's a
 				 * ring bullet On Kill: updates scoreboard, determines drop
 				 */
-				for (int yy = 0; yy < levelModel.getActiveEnemies().size(); yy++) {
-					EnemyModel em = levelModel.getActiveEnemies().get(xx);
-					if (b.collidesWith(em.getBoundingBox())) {
-						boolean kill = em.hit(b.getPower());
+				for (int i = 0; i < levelModel.getActiveEnemies().size(); i++) {
+					EnemyModel enemy = levelModel.getActiveEnemies().get(i);
+					if (bullet.collidesWith(enemy.getBoundingBox())) {
+						boolean kill = enemy.hit(bullet.getPower());
 						if (kill == true) {
 							SoundManager.get().playSound("kill");
-							score += ScoreTable.scoreForKilled(em);
-							Pickup[] p = em.getDrop();
+							score += ScoreTable.scoreForKilled(enemy);
+							Pickup[] p = enemy.getDrop();
 							if (p[0] != null) levelModel.getLevelPickups().add(p[0]);
 							if (p[1] != null) levelModel.getLevelPickups().add(p[1]);
 						}
