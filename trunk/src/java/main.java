@@ -25,10 +25,10 @@ public class main {
 		viewController.setModelController(modelController);
 		modelController.setViewController(viewController);
 
-		// m.setMainModel(new LevelModel(m));
-		// v.setMainView(new LevelView(v));
-		modelController.setMainModel(new SplashModel(modelController));  // Controller for Opening screen
-		viewController.setMainView(new SplashView(viewController));      // View for opening screen
+		modelController.setMainModel(new LevelModel(modelController, "assets/test_level.json"));
+		viewController.setMainView(new LevelView(viewController, "assets/test_level.png"));
+		// modelController.setMainModel(new SplashModel(modelController)); // Controller for Opening screen
+		// viewController.setMainView(new SplashView(viewController)); // View for opening screen
 
 		MillisecTimer timer = new MillisecTimer();
 		float MILLISEC_PER_FRAME = (float) 1000 / 30; // 30 FPS
@@ -42,7 +42,8 @@ public class main {
 				FRAME_SKIP = 0;
 				timer.reset();
 				viewController.render();
-			} else {
+			}
+			else {
 				FRAME_SKIP += 1;
 			}
 

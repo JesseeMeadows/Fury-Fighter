@@ -45,8 +45,8 @@ public class GameOverModel extends Model implements InputResponder{
 			// Restart Level
 			if (choice == 0) {
 				unregisterGameoverInput();
-				setLevelModel();
-				setLevelView();
+				setLevelModel("assets/test_level.json");
+				setLevelView("assets/test_level.png");
 			}
 			// Goto Title Screen
 			else {
@@ -65,8 +65,12 @@ public class GameOverModel extends Model implements InputResponder{
 		modelController.getViewController().getDrawPanel().getInputHandler().unregisterInputResponder(this);
 	}
 	
-	private void setLevelModel() {
-		modelController.setMainModel(new LevelModel(modelController));
+	private void setLevelModel(String jsonMapFile) {
+		modelController.setMainModel(new LevelModel(modelController, jsonMapFile));
+	}
+	
+	private void setLevelView(String pngMapFile) {
+		modelController.getViewController().setMainView(new LevelView(modelController.getViewController(), pngMapFile));
 	}
 	
 	private void setTitleView() {
@@ -77,9 +81,7 @@ public class GameOverModel extends Model implements InputResponder{
 		modelController.setMainModel(new TitleModel(modelController));
 	}
 
-	private void setLevelView() {
-		modelController.getViewController().setMainView(new LevelView(modelController.getViewController()));
-	}
+	
 
 	public BufferedImage getCursor() {
 		return cursor;

@@ -15,7 +15,12 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestTitleModel.class,
 		TestGameOverModel.class,
 		TestRingBullet.class,
-		TestSoundManager.class
+		TestSoundManager.class,
+		TestPlayerModel.class,
+		TestWeaponPickup.class,
+		TestModelController.class,
+		TestPickup.class,
+		TestBullet.class
 
 })
 public class TestAllSuite {}
