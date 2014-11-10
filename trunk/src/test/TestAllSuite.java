@@ -14,7 +14,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestSplashModel.class,
 		TestTitleModel.class,
 		TestGameOverModel.class,
-		TestRingBullet.class
+		TestRingBullet.class,
+		TestSoundManager.class
 
 })
 public class TestAllSuite {}
