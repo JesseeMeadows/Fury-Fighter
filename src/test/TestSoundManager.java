@@ -10,7 +10,7 @@ public class TestSoundManager{
 	}
 	
 	@Test
-	public void testGet{
+	public void testGet(){
 		assertTrue(SoundManager.get() instanceof SoundManager);
 	}
 	

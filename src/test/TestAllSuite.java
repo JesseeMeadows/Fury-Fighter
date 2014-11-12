@@ -20,7 +20,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestWeaponPickup.class,
 		TestModelController.class,
 		TestPickup.class,
-		TestBullet.class
+		TestBullet.class,
+		TestEnemyModel.class
 
 })
 public class TestAllSuite {}
