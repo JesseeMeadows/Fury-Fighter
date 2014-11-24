@@ -13,7 +13,9 @@ public class ModelController {
  */
 	ModelController(Model m) {
 		mainModel = m;
-		mainModel.setModelController(this);
+
+		if (mainModel != null)
+			mainModel.setModelController(this);
 	}
 
 	public void update(float dt) {
