@@ -48,6 +48,9 @@ public abstract class EnemyModel extends Model{
 	public void setXPos(int x){
 		this.xPos = x;
 	}
+	public void setYPos(int y){
+		this.yPos = y;
+	}
 	public int getXPos(){
 		return this.xPos;
     }
