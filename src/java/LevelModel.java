@@ -18,22 +18,22 @@ import java.lang.Number;
  */
 
 public class LevelModel extends Model{
-    
+
     private PlayerModel     playerModel;
     private ModelController modelController;
     private JSONObject      levelFile;
 
-    
+
     private TileMap tileMap;
-    private int mapWidthInPixels; 
+    private int mapWidthInPixels;
 
 
     private float distanceScrolled;  // Total distance scrolled from beginning: pixel units
     private float scrollVelocity;    // Speed screen scrolls
     private int   scrollDelta;         // Distance scrolled the previous frame
-    
-    
-    
+
+
+
     private ArrayList<EnemyModel> activeEnemies;   // Contains each enemy model that's currently active
     private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active
     private ArrayList<Bullet>     activeBullets;   // Contains active enemy bullets on screen
@@ -42,38 +42,38 @@ public class LevelModel extends Model{
 
 
     public boolean paused;
-	
+
     private MillisecTimer deathTimer;
-	
+
     LevelModel(ModelController theModelController, String fileLocation){
 		modelController = theModelController;
 		levelFile = loadToJson(fileLocation);
 		tileMap = new TileMap(levelFile);
 		playerModel = new PlayerModel(this, tileMap);
 		theModelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(playerModel);
-		
-		
-		
+
+
+
 		distanceScrolled = 0.0f;
 		scrollVelocity = 0.05f;
-		scrollDelta = 0;		
-				
+		scrollDelta = 0;
+
 		queuedEnemies = new ArrayList<EnemyModel>();
 		activeEnemies = new ArrayList<EnemyModel>();
 		activeBullets = new ArrayList<Bullet>();
 		levelPickups  = new ArrayList<Pickup>();
-		
+
 		// Retrieves Enemies, pickups, and tileMap
 		loadObjects(levelFile, queuedEnemies, levelPickups);
-		
+
 		paused = false;
-		
+
 		deathTimer = null;
-		
+
 		SoundManager.get().playSound("music");
-		
+
 		mapWidthInPixels = tileMap.getTileMapWidth() * tileMap.getTileWidth();
-		
+
     }
 
 	public int update(float dt) {
@@ -81,29 +81,29 @@ public class LevelModel extends Model{
 		if (paused || getDeathTimerDt() > 0) {
 			return 0;
 		}
-		
+
 		mapScroll(dt);
-		
+
 		spawnEnemies();
-		
-		playerModel.update(dt);
-		
+
+		playerModel.update(dt, scrollDelta);
+
 		updateEnemies(dt);
-		
+
 		manageBullets(dt);
-		
+
 		updatePickups(dt);
 
 		return 0;
     }
-	
+
 	/**
-	 * displays rest of the map if there's more to see, -Note: the 33 refers to a buffer space to load 
+	 * displays rest of the map if there's more to see, -Note: the 33 refers to a buffer space to load
 	 * the enemies off screen to ensure their appearance is natural -- flyer's width is 32 pixels */
 	private void mapScroll(float dt)
 	{
 		boolean endOfLevel = distanceScrolled >= mapWidthInPixels - (ViewController.SCREEN_WIDTH + 33);
-				
+
 		if (!endOfLevel) {
 			// Scroll right
 			scrollDelta = (int) (scrollVelocity * dt);
@@ -113,14 +113,14 @@ public class LevelModel extends Model{
 			scrollDelta = 0; // end of map
 		}
 	}
-	
+
 	/**Adds new enemies to screen(offscreen technically) when their start coordinate(xPos) appears on screen*/
 	private void spawnEnemies()
 	{
 		for (int i = 0; i < queuedEnemies.size(); i++) {
 			EnemyModel enemy = queuedEnemies.get(i);
-			boolean enemyCoordReached = distanceScrolled + ViewController.SCREEN_WIDTH > enemy.getXPos();		
-			
+			boolean enemyCoordReached = distanceScrolled + ViewController.SCREEN_WIDTH > enemy.getXPos();
+
 			if (enemyCoordReached) {
 				activateEnemy(enemy);
 				queuedEnemies.remove(i);
@@ -129,7 +129,7 @@ public class LevelModel extends Model{
 
 		}
 	}
-	
+
 	/** Removes dead enemies, updates living/active enemies, and creates enemy bullets*/
 	private void updateEnemies(float dt)
 	{
@@ -145,15 +145,15 @@ public class LevelModel extends Model{
 			// Otherwise update the enemies
 			else{
 			    enemy.update(dt);
-			    
+
 			    // Creates a bullet to travel from enemies position to players position(both positions in respect to time of roll)
-			    if (enemy.shootBullet()){                                                                 
+			    if (enemy.shootBullet()){
 					Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());          // Obtains player's location to shoot towards that direction
 					Vector2 enemyPos = new Vector2(enemy.getXPos(), enemy.getYPos());							   // Obtains enemy position at time of shot
 					Vector2 dir = enemyPos.sub(playerPos);                                       // Creates a vector for bullets travel during its life span
 					activeBullets.add(new EnemyBullet(enemy.xPos + (enemy.width / 2), enemy.yPos + (enemy.height / 2), dir));
 			    }
-				
+
 			    // Player dies if he collides with enemy
 				if(Utils.boxCollision(enemy.getBoundingBox(),playerModel.getBoundingBox())){
 					playerDeath();
@@ -161,7 +161,7 @@ public class LevelModel extends Model{
 			}
 		}
 	}
-	
+
 	/** Checks if any active bullets contact user and deletes those that are off-screen*/
 	private void manageBullets(float dt)
 	{
@@ -180,7 +180,7 @@ public class LevelModel extends Model{
 			}
 		}
 	}
-	
+
 	/** Updates all pickups locations on screen*/
 	private void updatePickups(float dt)
 	{
@@ -197,7 +197,7 @@ public class LevelModel extends Model{
 			activeEnemies.get(i).kill();
 		}
 	}
-	
+
 	// Configurations for player upon death
 	public void playerDeath()
 	{
@@ -213,7 +213,7 @@ public class LevelModel extends Model{
 			modelController.getViewController().setMainView(new GameOverView(modelController.getViewController()));
 		}
 	}
-	
+
 	// returns time since death if 2 seconds haven't elapsed, 0 otherwise
 	public float getDeathTimerDt()
 	{
@@ -230,16 +230,16 @@ public class LevelModel extends Model{
 			return 0.0f;
 		}
 	}
-	
+
 	/* This function takes a LevelMap which is stored in a JSON file and loads it
-	 * --- A JSON file is basically a file that's used to store a ton of different 
+	 * --- A JSON file is basically a file that's used to store a ton of different
 	 * 	   types of information                                                   */
-	
+
 	private JSONObject loadToJson(String filename) {
 		BufferedReader filein = null;
 		String linein;
 		String json = "";
-		
+
 		try {
 			filein = new BufferedReader(new FileReader(filename));
 			while ((linein = filein.readLine()) != null) {
@@ -262,24 +262,24 @@ public class LevelModel extends Model{
 				}
 			}
 		}
-		
+
 		return (JSONObject) JSONValue.parse(json);
-	}		
+	}
 
     public int getDistanceScrolled(){
 		return (int)distanceScrolled;
     }
-    
+
     public int getScrollDelta(){
 	return scrollDelta;
     }
-	    
+
     public TileMap getTileMap(){
 		return tileMap;
     }
 //    public BufferedImage getTileImage(int idx){
 //		return tileImages[idx];
-//    }   
+//    }
 
     public ModelController getModelController(){
 		return modelController;
@@ -288,31 +288,31 @@ public class LevelModel extends Model{
     public void activateEnemy(EnemyModel em){
 	activeEnemies.add(em);
     }
-	
+
 	public ArrayList<EnemyModel> getActiveEnemies(){
 		return activeEnemies;
 	}
-    
+
     public ArrayList<Bullet> getEnemyBullets(){
 	return activeBullets;
     }
-    
+
     public ArrayList<Pickup> getLevelPickups(){
 	return levelPickups;
     }
-      
+
     public HashMap<String,Model> getVisibleModels(){
 		HashMap<String,Model> rv = new HashMap<String,Model>();
 		rv.put("playerModel",playerModel);
 		return rv;
     }
-    
+
 //    public BufferedImage compileTileMap(int[] tileReferences, TileSet tileset) {
 //    	int tileWidth  = tileset.getTileWidth();
 //    	int tileHeight = tileset.getTileHeight();
 //    	int tileMapWidth  = tileset.getTileMapWidth();
-//    	int tileMapHeight = tileset.getTileMapHeight(); 
-//    	
+//    	int tileMapHeight = tileset.getTileMapHeight();
+//
 //    	BufferedImage tileMap = new BufferedImage()
 //    }
 
@@ -329,22 +329,22 @@ public class LevelModel extends Model{
 				objectType = (String) (object.get("type"));
 
 				if (objectType == "enemy-flyer") {
-					enemyQueue.add((EnemyModel) new FlyerModel( ((Number) object.get("x")).intValue(), 
+					enemyQueue.add((EnemyModel) new FlyerModel( ((Number) object.get("x")).intValue(),
 																   ((Number) object.get("y")).intValue()));
 				}
 				else if (objectType == "speed-pod") {
 					pickupQueue.add(new Pickup( ((Number) object.get("x")).intValue(),
-											     ((Number) object.get("y")).intValue(), 
+											     ((Number) object.get("y")).intValue(),
 											     "speed", "assets/speedPickupImage.png"));
 				}
 				else if (objectType == "defense-pod") {
-					pickupQueue.add(new Pickup( ((Number) object.get("x")).intValue(), 
-								   				 ((Number) object.get("y")).intValue(), 
+					pickupQueue.add(new Pickup( ((Number) object.get("x")).intValue(),
+								   				 ((Number) object.get("y")).intValue(),
 								   				  "defense_pod", "assets/defensePodImage.png"));
 				}
-				
-				
+
+
 			}
     }
-    
+
 }

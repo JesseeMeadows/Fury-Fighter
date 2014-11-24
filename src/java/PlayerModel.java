@@ -92,7 +92,7 @@ public class PlayerModel extends Model implements InputResponder {
 
 		bulletList = new ArrayList<Bullet>();
 		bulletTimer = new MillisecTimer();
-		bulletType = BulletType.BASIC;		
+		bulletType = BulletType.BASIC;
 
 		// Loads Images used to show which direction the character sprite is
 		// moving/aiming
@@ -195,7 +195,7 @@ public class PlayerModel extends Model implements InputResponder {
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT) 	rightDown = false;
 		if (e.getKeyCode() == KeyEvent.VK_Z) 		zDown = false;
 		if (e.getKeyCode() == KeyEvent.VK_X) 		xDown = false;
-		
+
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			if (levelModel.paused == true)
 				levelModel.paused = false;
@@ -215,12 +215,12 @@ public class PlayerModel extends Model implements InputResponder {
 								lives += 1;
 							}
 							break;
-		
+
 		case "ring":		ringLevel += 1;
 							bulletType = BulletType.RING;
 							SoundManager.get().playSound("pickup");
 							break;
-		
+
 		case "missle":		missleLevel += 1;
 							bulletType = BulletType.MISSLE;
 							SoundManager.get().playSound("pickup");
@@ -229,23 +229,23 @@ public class PlayerModel extends Model implements InputResponder {
 		case "laser": 		laserLevel += 1;
 							bulletType = BulletType.LASER;
 							SoundManager.get().playSound("pickup");
-							break;		
-			
+							break;
+
 		case "speed":		velocity += .05;
 							SoundManager.get().playSound("pickup");
 							break;
-		
+
 		case "defense_pod":		defensePodLevel += 1;
 								SoundManager.get().playSound("pickup");
 								break;
-			
+
 		}
 	}
 
 	/*
 	 * The update is called explicitly in LevelModel's update method.
 	 */
-	public int update(float dt)
+	public int update(float dt, int scrollDelta)
 	{
 	    // x => fire weapon
 		if (xDown == true && bulletTimer.getDt() > 250) {
@@ -268,11 +268,11 @@ public class PlayerModel extends Model implements InputResponder {
 								SoundManager.get().playSound("laser");
 								break;
 			}
-		}		
+		}
 
 		// use CobaltBomb
 		if (zDown) cobaltBomb();
-		
+
 		// retain previous frames coordinates
 		int oldX = xPos;
 		int oldY = yPos;
@@ -346,12 +346,12 @@ public class PlayerModel extends Model implements InputResponder {
 		xPos += deltaX;
 		ArrayList<Integer> tiles = onTiles();
 
-		
+
 
 		// Ensures player doesn't move horizontally through solid object tiles
 		for (int i = 0; i < tiles.size(); i++) {
 			if (tiles.get(i) < 17 || tiles.get(i) > 23) {
-				xPos = oldX;              
+				xPos = oldX - scrollDelta;
 			}
 		}
 
@@ -362,7 +362,7 @@ public class PlayerModel extends Model implements InputResponder {
 			if (tiles.get(i) < 17 || tiles.get(i) > 23) {
 				yPos = oldY;
 			}
-		}		
+		}
 
 		// Restricts player from moving off left side of screen
 		if (xPos < 0) xPos = 0;
@@ -387,18 +387,18 @@ public class PlayerModel extends Model implements InputResponder {
 				xx--;
 			}
 		}
-		
+
 
 		// updates the defense pod's position and determines if it killed an enemy(updates scoretable if so)
 		if (defensePodLevel > 0) {
 			// updates pod position
 			defensePodOscillator += ((float) defensePodLevel / 2 * dt);
-			Rectangle boundingBox = new Rectangle(getDefensePodXPos(), getDefensePodYPos(), defensePodImage.getWidth(), defensePodImage.getHeight()); // defense pod's hitbox																																						
+			Rectangle boundingBox = new Rectangle(getDefensePodXPos(), getDefensePodYPos(), defensePodImage.getWidth(), defensePodImage.getHeight()); // defense pod's hitbox
 
 			// determines if pod contacted and killed an enemy
 			for (int i = 0; i < levelModel.getActiveEnemies().size(); i++) {
 				EnemyModel em = levelModel.getActiveEnemies().get(i);
-				
+
 				if (Utils.boxCollision(em.getBoundingBox(), boundingBox)) {
 					em.kill();
 					score += ScoreTable.scoreForKilled(em);
@@ -418,7 +418,7 @@ public class PlayerModel extends Model implements InputResponder {
 			}
 
 			else {
-				
+
 				bullet.update(dt);
 
 				Rectangle boundingBox = bullet.getBoundingBox();
@@ -426,7 +426,7 @@ public class PlayerModel extends Model implements InputResponder {
 				int tileCoordY;
 				int tile;
 				boolean deleted = false;
-				
+
 				/*
 				 * nested four loop only is grabbing the 4 corners of the
 				 * bullet's hit box and checking the type of tiles that they
@@ -439,7 +439,7 @@ public class PlayerModel extends Model implements InputResponder {
 				for (int x = bullet.xPos; x < bullet.xPos + boundingBox.getWidth(); x += boundingBox.getWidth()) {
 						tileCoordX = (x + levelModel.getDistanceScrolled()) / tileMap.getTileWidth();
 						tileCoordY = y / tileMap.getTileHeight();
-						
+
 
 						// flags bullet to be deleted if it contacts solid tile(besides ring bullets)
 						tile = tileMap.getTile(((tileCoordY) * tileMap.getTileMapWidth()) + (tileCoordX));
@@ -493,7 +493,7 @@ public class PlayerModel extends Model implements InputResponder {
 			missleLevel = 0;
 		else if (bulletType == BulletType.LASER)
 			laserLevel = 0;
-		else if (bulletType == BulletType.RING) 
+		else if (bulletType == BulletType.RING)
 			ringLevel = 0;
 
 		// Eliminates collected fragments and defense pod
@@ -520,7 +520,7 @@ public class PlayerModel extends Model implements InputResponder {
 			cobaltTimer = new MillisecTimer();
 		}
 	}
-	
+
 	private void fireBasic()
 	{
 		bulletList.add(new Bullet(xPos + (spriteWidth / 2), yPos + (spriteHeight / 2), curFrame));
