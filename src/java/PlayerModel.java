@@ -371,7 +371,7 @@ public class PlayerModel extends Model implements InputResponder {
 		}
 
 		// Restricts player from moving off left side of screen
-		if (xPos < 0) xPos = 0;
+		if (xPos < 0) levelModel.playerDeath();
 
 		// Restricts player from moving off right side of screen
 		if (xPos > ViewController.SCREEN_WIDTH - spriteWidth) xPos = ViewController.SCREEN_WIDTH - spriteWidth;
