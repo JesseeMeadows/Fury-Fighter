@@ -8,6 +8,6 @@ public abstract class Model{
 		modelController = m;
 	}
 
-    public abstract int update(float dt, int scrollDelta);
+    public abstract int update(float dt);
     public abstract HashMap<String,Model> getVisibleModels();
 }

@@ -242,6 +242,12 @@ public class PlayerModel extends Model implements InputResponder {
 		}
 	}
 
+
+	public int update(float dt)
+	{
+		return update(dt, 0);
+	}
+
 	/*
 	 * The update is called explicitly in LevelModel's update method.
 	 */
