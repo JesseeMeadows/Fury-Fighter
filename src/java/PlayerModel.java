@@ -357,7 +357,7 @@ public class PlayerModel extends Model implements InputResponder {
 		// Ensures player doesn't move horizontally through solid object tiles
 		for (int i = 0; i < tiles.size(); i++) {
 			if (tiles.get(i) < 17 || tiles.get(i) > 23) {
-				xPos = oldX - deltaX;
+				xPos = oldX - (int)deltaX - 1;
 
 				if (xPos < 0)
 					levelModel.playerDeath();
