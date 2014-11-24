@@ -10,11 +10,11 @@ import static org.junit.Assert.*;
 import org.json.simple.JSONObject;
 
 public class TestPlayerModel {
-	
+
 	@Test
 	public void testPlayerModel()
 		{
-		LevelModel levelModel = new LevelModel(new ModelController(), "");
+		LevelModel levelModel = new LevelModel(new ModelController(null), "");
 		TileMap tileMap = new TileMap(new JSONObject());
 
 		PlayerModel result = new PlayerModel(levelModel, tileMap);
@@ -24,7 +24,7 @@ public class TestPlayerModel {
 	@Test
 	public void testDeath()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
 
 		playerModel.death();
 
@@ -34,7 +34,7 @@ public class TestPlayerModel {
 	@Test
 	public void testGetBoundingBox()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
 
 		Rectangle result = playerModel.getBoundingBox();
 
@@ -42,13 +42,13 @@ public class TestPlayerModel {
 		assertNotNull(result);
 	}
 
-	
+
 
 
 	@Test
 	public void testGetBulletList()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
 		assertNotNull(playerModel.getBulletList()); // This is an array lists and should never be null
 	}
 
@@ -98,7 +98,7 @@ public class TestPlayerModel {
 	@Test
 	public void testGetPickup()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
 
 		int	temp=playerModel.getRingLevel();
 		playerModel.getPickup("ring");
@@ -125,7 +125,7 @@ public class TestPlayerModel {
 	@Test
 	public void testGetPlayerImage()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
 
 		BufferedImage result = playerModel.getPlayerImage();
 
@@ -137,7 +137,7 @@ public class TestPlayerModel {
 	@Test
 	public void testGetVisibleModels()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
 		HashMap<String, Model> result = playerModel.getVisibleModels();
 
 		assertNotNull(result);
@@ -147,7 +147,7 @@ public class TestPlayerModel {
 	@Test
 	public void testKeyDownResponse()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
 		KeyEvent e = new KeyEvent(Box.createGlue(), 1, 1L, 1, 1);
 
 		playerModel.keyDownResponse(e);
@@ -159,7 +159,7 @@ public class TestPlayerModel {
 	@Test
 	public void testKeyUpResponse()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
 		KeyEvent e = new KeyEvent(Box.createGlue(), 1, 1L, 1, 1);
 
 		playerModel.keyUpResponse(e);
@@ -170,7 +170,7 @@ public class TestPlayerModel {
 	@Test
 	public void testOnTiles()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
 
 		ArrayList<Integer> result = playerModel.onTiles();
 

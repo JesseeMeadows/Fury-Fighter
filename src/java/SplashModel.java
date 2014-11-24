@@ -8,8 +8,6 @@ import java.awt.event.KeyEvent;
  */
 
 public class SplashModel extends Model implements InputResponder {
-
-	private ModelController modelController;
 	private int millisecElasped;
 
 	public SplashModel(ModelController m) {
