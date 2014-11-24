@@ -2,17 +2,17 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ViewController{
-    
+
     public static final int SCREEN_WIDTH = 512;
-    public static final int SCREEN_HEIGHT = 512; 
+    public static final int SCREEN_HEIGHT = 512;
 
     private JFrame mainWindow;
     private DrawSurface drawPanel;
-    
+
     private ModelController modelController;
 
-    
-    ViewController(){
+
+    ViewController(ModelController m){
 	this.drawPanel = new DrawSurface(this,SCREEN_WIDTH,SCREEN_HEIGHT);
 	this.drawPanel.setPreferredSize(new Dimension(SCREEN_WIDTH,SCREEN_HEIGHT));
 	this.mainWindow = new JFrame("Fury Fighter");
@@ -23,12 +23,14 @@ public class ViewController{
 	this.mainWindow.pack();
 	this.mainWindow.setResizable(false);
 	this.mainWindow.setVisible(true);
+
+    this.modelController = m;
     }
 
     public void render(){
 	this.mainWindow.repaint();
 	this.mainWindow.setVisible(true);
-	
+
     }
 
     public void setModelController(ModelController m){

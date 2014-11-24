@@ -8,7 +8,7 @@ public class TestModelController {
 	public void testModelController()
 		{
 
-		ModelController modelController = new ModelController();
+		ModelController modelController = new ModelController(null);
 		assertNotNull(modelController);
 		assertEquals(null, modelController.getMainModel());
 	}
@@ -16,8 +16,8 @@ public class TestModelController {
 	@Test
 	public void testGetViewController()
 		{
-		ModelController modelController = new ModelController();
-		modelController.setViewController(new ViewController());
+		ModelController modelController = new ModelController(null);
+		modelController.setViewController(new ViewController(modelController));
 		assertNotNull(modelController.getViewController());
 	}
 }

@@ -9,14 +9,14 @@ import java.io.IOException;
 
 public class TitleModel extends Model implements InputResponder {
 
-	private ModelController modelController;	
+	private ModelController modelController;
 	private BufferedImage titleImage;
 	private BufferedImage cursor;
 	private int choice;
 
 	public TitleModel(ModelController theModelController) {
-		modelController = theModelController;		
-		choice = 0;		
+		modelController = theModelController;
+		choice = 0;
 		registerTitleInput();
 
 		try {
@@ -28,7 +28,7 @@ public class TitleModel extends Model implements InputResponder {
 		}
 
 	}
-	
+
 
 	public int update(float dt) {
 		return 0;
@@ -51,7 +51,7 @@ public class TitleModel extends Model implements InputResponder {
 			}
 		}
 	}
-	
+
 	private void registerTitleInput() {
 		modelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(this);
 	}
@@ -62,7 +62,7 @@ public class TitleModel extends Model implements InputResponder {
 	private void setLevelModel(String jsonMapFile) {
 		modelController.setMainModel(new LevelModel(modelController, jsonMapFile));
 	}
-	
+
 	private void setLevelView(String pngMapFile) {
 		modelController.getViewController().setMainView(new LevelView(modelController.getViewController(), pngMapFile));
 	}
@@ -78,7 +78,7 @@ public class TitleModel extends Model implements InputResponder {
 	public int getChoice() {
 		return choice;
 	}
-	
+
 	public HashMap<String, Model> getVisibleModels() {
 		return new HashMap<String, Model>();
 	}

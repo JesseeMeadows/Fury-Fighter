@@ -19,8 +19,8 @@ public class main {
 		sm.addSound("fragment", "assets/snd/fragment.wav");
 		sm.setLooping("music", true);
 
-		ModelController modelController = new ModelController();
-		ViewController viewController = new ViewController();
+		ModelController modelController = new ModelController(new SplashModel(null));
+		ViewController viewController = new ViewController(modelController);
 
 		viewController.setModelController(modelController);
 		modelController.setViewController(viewController);
