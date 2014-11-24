@@ -358,6 +358,9 @@ public class PlayerModel extends Model implements InputResponder {
 		for (int i = 0; i < tiles.size(); i++) {
 			if (tiles.get(i) < 17 || tiles.get(i) > 23) {
 				xPos = oldX - scrollDelta - 1;
+
+				if (xPos < 0)
+					levelModel.playerDeath();
 			}
 		}
 
@@ -371,7 +374,7 @@ public class PlayerModel extends Model implements InputResponder {
 		}
 
 		// Restricts player from moving off left side of screen
-		if (xPos < 0) levelModel.playerDeath();
+		if (xPos < 0) xPos = 0;
 
 		// Restricts player from moving off right side of screen
 		if (xPos > ViewController.SCREEN_WIDTH - spriteWidth) xPos = ViewController.SCREEN_WIDTH - spriteWidth;
