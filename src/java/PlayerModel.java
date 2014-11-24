@@ -358,9 +358,9 @@ public class PlayerModel extends Model implements InputResponder {
 		for (int i = 0; i < tiles.size(); i++) {
 			if (tiles.get(i) < 17 || tiles.get(i) > 23) {
 				if (leftDown != true)
-					xPos = oldX - scrollDelta - 1;
+					xPos = oldX - scrollDelta - 2;
 				else
-					xPos = oldX + scrollDelta + 1;
+					xPos = oldX + scrollDelta + 2;
 
 				if (xPos < 0)
 					levelModel.playerDeath();
