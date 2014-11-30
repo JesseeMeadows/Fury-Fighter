@@ -46,8 +46,8 @@ public class TitleModel extends Model implements InputResponder {
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			if (choice == 0) {
 				unregisterTitleInput();
-				setLevelModel("assets/test_level.json");
-				setLevelView("assets/test_level.png");
+				setLevelModel();
+				setLevelView();
 			}
 		}
 	}
@@ -59,12 +59,12 @@ public class TitleModel extends Model implements InputResponder {
 		modelController.getViewController().getDrawPanel().getInputHandler().unregisterInputResponder(this);
 	}
 
-	private void setLevelModel(String jsonMapFile) {
-		modelController.setMainModel(new LevelModel(modelController, jsonMapFile));
+	private void setLevelModel() {
+		modelController.setMainModel(new LevelModel(modelController));
 	}
 
-	private void setLevelView(String pngMapFile) {
-		modelController.getViewController().setMainView(new LevelView(modelController.getViewController(), pngMapFile));
+	private void setLevelView() {
+		modelController.getViewController().setMainView(new LevelView(modelController.getViewController()));
 	}
 
 	public BufferedImage getTitleImage() {

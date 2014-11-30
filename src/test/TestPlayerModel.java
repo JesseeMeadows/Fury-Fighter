@@ -14,17 +14,17 @@ public class TestPlayerModel {
 	@Test
 	public void testPlayerModel()
 		{
-		LevelModel levelModel = new LevelModel(new ModelController(null), "");
+		LevelModel levelModel = new LevelModel(new ModelController(null));
 		TileMap tileMap = new TileMap(new JSONObject());
 
-		PlayerModel result = new PlayerModel(levelModel, tileMap);
+		PlayerModel result = new PlayerModel(levelModel);
 		assertNotNull(result); // If something happends and it gets an execption then new will fail it this should be null.
 	}
 
 	@Test
 	public void testDeath()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 
 		playerModel.death();
 
@@ -34,7 +34,7 @@ public class TestPlayerModel {
 	@Test
 	public void testGetBoundingBox()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 
 		Rectangle result = playerModel.getBoundingBox();
 
@@ -48,7 +48,7 @@ public class TestPlayerModel {
 	@Test
 	public void testGetBulletList()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 		assertNotNull(playerModel.getBulletList()); // This is an array lists and should never be null
 	}
 
@@ -58,7 +58,7 @@ public class TestPlayerModel {
 	public void testFireBasic()
 		{
 			// Was not really sure how to test this. Fire adds a new bullet to the list so I just check for that.
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 		int size=playerModel.getBulletList().size();
 		playerModel.fireBasic();
             assertTrue(playerModel.getBulletList().size()>size);
@@ -68,7 +68,7 @@ public class TestPlayerModel {
 	public void testFireRing()
 		{
 			// Was not really sure how to test this. Fire adds a new bullet to the list so I just check for that.
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 		int size=playerModel.getBulletList().size();
 		playerModel.fireRing();
             assertTrue(playerModel.getBulletList().size()>size);
@@ -78,7 +78,7 @@ public class TestPlayerModel {
 	public void testFireMissle()
 		{
 			// Was not really sure how to test this. Fire adds a new bullet to the list so I just check for that.
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 		int size=playerModel.getBulletList().size();
 		playerModel.fireMissle();
             assertTrue(playerModel.getBulletList().size()>size);
@@ -89,7 +89,7 @@ public class TestPlayerModel {
 	public void testFireLaser()
 		{
 			// Was not really sure how to test this. Fire adds a new bullet to the list so I just check for that.
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 		int size=playerModel.getBulletList().size();
 		playerModel.fireLaser();
             assertTrue(playerModel.getBulletList().size()>size);
@@ -98,7 +98,7 @@ public class TestPlayerModel {
 	@Test
 	public void testGetPickup()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 
 		int	temp=playerModel.getRingLevel();
 		playerModel.getPickup("ring");
@@ -125,7 +125,7 @@ public class TestPlayerModel {
 	@Test
 	public void testGetPlayerImage()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 
 		BufferedImage result = playerModel.getPlayerImage();
 
@@ -137,7 +137,7 @@ public class TestPlayerModel {
 	@Test
 	public void testGetVisibleModels()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 		HashMap<String, Model> result = playerModel.getVisibleModels();
 
 		assertNotNull(result);
@@ -147,7 +147,7 @@ public class TestPlayerModel {
 	@Test
 	public void testKeyDownResponse()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 		KeyEvent e = new KeyEvent(Box.createGlue(), 1, 1L, 1, 1);
 
 		playerModel.keyDownResponse(e);
@@ -159,7 +159,7 @@ public class TestPlayerModel {
 	@Test
 	public void testKeyUpResponse()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 		KeyEvent e = new KeyEvent(Box.createGlue(), 1, 1L, 1, 1);
 
 		playerModel.keyUpResponse(e);
@@ -170,7 +170,7 @@ public class TestPlayerModel {
 	@Test
 	public void testOnTiles()
 		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null), ""), new TileMap(new JSONObject()));
+		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
 
 		ArrayList<Integer> result = playerModel.onTiles();
 

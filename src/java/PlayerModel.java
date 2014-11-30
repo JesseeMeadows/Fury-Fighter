@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.awt.image.BufferedImage;
 import java.awt.Rectangle;
 import javax.imageio.ImageIO;
+
+
 import java.io.File;
 import java.io.IOException;
 
@@ -58,7 +60,7 @@ public class PlayerModel extends Model implements InputResponder {
 	private LevelModel levelModel;
 	private TileMap tileMap;
 
-	PlayerModel(LevelModel levelModel, TileMap tileMap) {
+	PlayerModel(LevelModel levelModel) {
 
 		// No buttons pressed on player creation
 		upDown = false;
@@ -86,8 +88,7 @@ public class PlayerModel extends Model implements InputResponder {
 		// Characters movement speed
 		// Note movement updates at milliseconds since last frame(~33) *
 		// velocity(.1)
-		// so 33 * .1 = 3.3 pixels moved per frame, which meets the
-		// specification
+		// 33 * .1 = 3.3 pixels moved per frame, which meets the specification
 		velocity = .1f;
 
 		bulletList = new ArrayList<Bullet>();
@@ -119,8 +120,8 @@ public class PlayerModel extends Model implements InputResponder {
 
 		curFrame = 2;
 		this.levelModel = levelModel;
-		this.tileMap = tileMap;
-		// levelModel.getModelController().getViewController().getDrawPanel().getInputHandler().registerInputResponder(this);
+		tileMap = levelModel.getTileMap();	
+		
 	}
 
 	/*

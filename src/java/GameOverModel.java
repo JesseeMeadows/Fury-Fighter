@@ -66,11 +66,11 @@ public class GameOverModel extends Model implements InputResponder{
 	}
 	
 	private void setLevelModel(String jsonMapFile) {
-		modelController.setMainModel(new LevelModel(modelController, jsonMapFile));
+		modelController.setMainModel(new LevelModel(modelController));
 	}
 	
 	private void setLevelView(String pngMapFile) {
-		modelController.getViewController().setMainView(new LevelView(modelController.getViewController(), pngMapFile));
+		modelController.getViewController().setMainView(new LevelView(modelController.getViewController()));
 	}
 	
 	private void setTitleView() {
