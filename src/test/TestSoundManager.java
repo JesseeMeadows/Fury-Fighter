@@ -6,7 +6,7 @@ public class TestSoundManager{
 	@Before
 	public void initialize()
 	{
-		SoundManager.addSound("HiBoss", "snd/BossIntro.wav");
+		SoundManager.addSound("HiBoss", "assets/snd/BossIntro.wav");
 	}
 	
 	@Test
