@@ -262,19 +262,24 @@ public class LevelModel extends Model{
 			    enemy.update(dt);
 
 			    // Creates a bullet to travel from enemies position to players position(both positions in respect to time of roll)
-			    if (enemy.shootBullet()){
-					Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());          // Obtains player's location to shoot towards that direction
-					Vector2 enemyPos = new Vector2(enemy.getXPos(), enemy.getYPos());							   // Obtains enemy position at time of shot
-					Vector2 dir = enemyPos.sub(playerPos);                                       // Creates a vector for bullets travel during its life span
-					activeBullets.add(new EnemyBullet(enemy.xPos + (enemy.width / 2), enemy.yPos + (enemy.height / 2), dir));
+				if (enemy.shootBullet()) {
+					createEnemyBullet(enemy);
 			    }
 
 			    // Player dies if he collides with enemy
-				if(Utils.boxCollision(enemy.getBoundingBox(),playerModel.getBoundingBox())){
+				boolean enemyCollision = Utils.boxCollision(enemy.getBoundingBox(), playerModel.getBoundingBox());
+				if (enemyCollision) {
 					playerDeath();
 				}
 			}
 		}
+	}
+	
+	public void createEnemyBullet(EnemyModel enemy) {
+		Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());    // Obtains player's location to shoot towards that direction
+		Vector2 enemyPos = new Vector2(enemy.getXPos(), enemy.getYPos());				  // Obtains enemy position at time of shot
+		Vector2 dir = enemyPos.sub(playerPos);                                            // Creates a vector for bullets travel during its life span
+		activeBullets.add(new EnemyBullet(enemy.xPos + (enemy.width / 2), enemy.yPos + (enemy.height / 2), dir));
 	}
 
 	/** Checks if any active bullets contact user and deletes those that are off-screen*/
@@ -319,6 +324,8 @@ public class LevelModel extends Model{
 		SoundManager.get().playSound("death");
 		deathTimer = new MillisecTimer();
 		playerModel.death();
+		distanceScrolled = 0.0f;
+		scrollDelta = 0;
 		activeBullets.clear();
 		activeEnemies.clear();
 
@@ -454,46 +461,8 @@ public class LevelModel extends Model{
 		mapWidthInPixels = tileMap.getTileMapWidth() * tileMap.getTileWidth();
 		
 	}
-
-    public int getDistanceScrolled(){
-		return (int)distanceScrolled;
-    }
-
-    public int getScrollDelta(){
-	return scrollDelta;
-    }
-
-    public TileMap getTileMap(){
-		return tileMap;
-    }
-
-    public ModelController getModelController(){
-		return modelController;
-    }
-
-    public void activateEnemy(EnemyModel em){
-	activeEnemies.add(em);
-    }
-
-	public ArrayList<EnemyModel> getActiveEnemies(){
-		return activeEnemies;
-	}
-
-    public ArrayList<Bullet> getEnemyBullets(){
-	return activeBullets;
-    }
-
-    public ArrayList<Pickup> getLevelPickups(){
-	return levelPickups;
-    }
-
-    public HashMap<String,Model> getVisibleModels(){
-		HashMap<String,Model> rv = new HashMap<String,Model>();
-		rv.put("playerModel",playerModel);
-		return rv;
-    }
-
-    private void loadObjects(JSONObject levelFile, ArrayList<EnemyModel> enemyQueue, ArrayList<Pickup> pickupQueue) {
+	
+	private void loadObjects(JSONObject levelFile, ArrayList<EnemyModel> enemyQueue, ArrayList<Pickup> pickupQueue) {
     	String objectType;
 
     	JSONArray layersArray = (JSONArray) levelFile.get("layers");
@@ -524,4 +493,53 @@ public class LevelModel extends Model{
 			}
     }
 
-}
+    public int getDistanceScrolled() {
+		return (int)distanceScrolled;
+    }
+
+    public int getScrollDelta() {
+	return scrollDelta;
+    }
+
+    public TileMap getTileMap() {
+		return tileMap;
+    }
+    
+    public float getScrollVelocity() {
+    	return scrollVelocity;
+    }
+
+    public ModelController getModelController() {
+		return modelController;
+    }
+
+    public void activateEnemy(EnemyModel em){
+	activeEnemies.add(em);
+    }
+
+	public ArrayList<EnemyModel> getActiveEnemies() {
+		return activeEnemies;
+	}
+	
+	public ArrayList<EnemyModel> getQueuedEnemies() {
+		return queuedEnemies;
+	}
+	
+	public ArrayList<Bullet> getActiveBullets() {
+		return activeBullets;
+	}
+    public ArrayList<Bullet> getEnemyBullets(){
+	return activeBullets;
+    }
+
+    public ArrayList<Pickup> getLevelPickups(){
+	return levelPickups;
+    }
+
+    public HashMap<String,Model> getVisibleModels(){
+		HashMap<String,Model> rv = new HashMap<String,Model>();
+		rv.put("playerModel",playerModel);
+		return rv;
+    }
+
+ }

@@ -50,33 +50,35 @@ public class Bullet {
 
 	// Updates the bullets position based on the bullets velocity and direction
 	public int update(float dt) {
-		if (direction == 0) {
-			yPos -= velocity * dt;
-		}
-		else if (this.direction == 1) {
-			xPos += velocity * dt;
-			yPos -= velocity * dt;
-		}
-		else if (direction == 2) {
-			xPos += velocity * dt;
-		}
-		else if (direction == 3) {
-			xPos += velocity * dt;
-			yPos += velocity * dt;
-		}
-		else if (direction == 4) {
-			yPos += velocity * dt;
-		}
-		else if (direction == 5) {
-			xPos -= this.velocity * dt;
-			yPos += this.velocity * dt;
-		}
-		else if (direction == 6) {
-			xPos -= velocity * dt;
-		}
-		else if (direction == 7) {
-			xPos -= velocity * dt;
-			yPos -= velocity * dt;
+		
+		switch (direction) {
+			case 0:		yPos -= velocity * dt;
+						break;
+						
+			case 1:		xPos += velocity * dt;
+						yPos -= velocity * dt;
+						break;
+			
+			case 2: 	xPos += velocity * dt;
+						break;
+			
+			case 3:		xPos += velocity * dt;
+						yPos += velocity * dt;
+						break;
+			
+			case 4: 	yPos += velocity * dt;
+						break;
+				
+			case 5:		xPos -= this.velocity * dt;
+						yPos += this.velocity * dt;
+						break;
+			
+			case 6:		xPos -= velocity * dt;
+						break;
+			
+			case 7:		xPos -= velocity * dt;
+						yPos -= velocity * dt;
+						break;			
 		}
 		return 0;
 	}
