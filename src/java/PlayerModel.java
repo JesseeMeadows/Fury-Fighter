@@ -120,8 +120,8 @@ public class PlayerModel extends Model implements InputResponder {
 
 		curFrame = 2;
 		this.levelModel = levelModel;
-		tileMap = levelModel.getTileMap();	
-		
+		tileMap = levelModel.getTileMap();
+
 	}
 
 	/*
@@ -140,26 +140,8 @@ public class PlayerModel extends Model implements InputResponder {
 		int tileWidth = tileMap.getTileWidth();
 		int tileHeight = tileMap.getTileHeight();
 
-		int coverWide = 1;
-		int coverHigh = 1;
-
-		// Character only touching 1 column of tiles(Perfectly aligned vertically)
-		if (xPos % tileWidth == 0) {
-			coverWide = 1;
-		}
-		// Character touching 2 columns of tiles
-		else {
-			coverWide = 2;
-		}
-
-		// Character touching 2 rows of tiles(Perfectly aligned)
-		if (yPos % tileHeight == 0) {
-			coverHigh = 2;
-		}
-		// Character touching 3 rows of tiles
-		else {
-			coverHigh = 3;
-		}
+		int coverWide = 2;
+		int coverHigh = 3;
 
 		// Obtains upper-left tile that the character sprite is currently on
 		int tileCoordX = (xPos + levelModel.getDistanceScrolled()) / tileWidth;
@@ -359,9 +341,9 @@ public class PlayerModel extends Model implements InputResponder {
 		for (int i = 0; i < tiles.size(); i++) {
 			if (tiles.get(i) < 17 || tiles.get(i) > 23) {
 				if (leftDown != true)
-					xPos = oldX - scrollDelta - 2;
+					xPos = oldX - scrollDelta;
 				else
-					xPos = oldX + scrollDelta + 2;
+					xPos = oldX + scrollDelta;
 
 				if (xPos < 0)
 					levelModel.playerDeath();
@@ -490,7 +472,7 @@ public class PlayerModel extends Model implements InputResponder {
                         levelModel.boss.checkBullet(bullet);
                     }
 				}
-                
+
 			}
 		}
 		return 0;
