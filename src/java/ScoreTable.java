@@ -37,17 +37,17 @@ public class ScoreTable
 
 	public static int scoreForKilled(EnemyModel enemy)
 	{
-		throw new UnsupportedOperationException("scoreForKilled not implemented yet.");
+		return 100;
 	}
 
 	public static int scoreForPickup(Pickup pickup)
 	{
-		throw new UnsupportedOperationException("scoreForPickup not implemented yet.");
+		return 100;
 	}
 
 	/* TODO: Figure out parameters for scoreForLevelBonus */
 	public static int scoreForLevelBonus()
 	{
-		throw new UnsupportedOperationException("scoreForLevelBonus not implemented yet.");
+		return 10000;
 	}
 }
