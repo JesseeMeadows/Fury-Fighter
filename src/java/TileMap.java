@@ -1,3 +1,4 @@
+
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -14,9 +15,7 @@ public class TileMap {
     private final int tileMapHeight;	   // Height of tileMap: Tile units 
     
     private final int firstGid;    
-    private int[] tileMap;				   // tile references of tileset used in compilation of Map
-
-    // private BufferedImage tileset[];               // Tiles parsed
+    private int[] tileMap;				   // tile references of tileset used in compilation of Map   
 
     public TileMap(JSONObject levelFile) {
 
@@ -70,40 +69,6 @@ public class TileMap {
 		
 		return tileRefContainer;
 	}
-
-//    private void parseToTiles(String location, JSONObject jsonLevel) {    	
-//    	BufferedImage tilesetImage;     	
-//		
-//		try {
-//			tilesetImage     = ImageIO.read(new File(location));
-//			int totalRows    = tilesetImage.getHeight() / tileHeight;
-//			int totalColumns = tilesetImage.getWidth() / tileWidth;
-//			
-//			tileset = new BufferedImage[totalRows * totalColumns];
-//			
-//			for (int row = 0; row < totalRows; row++) {
-//				for (int column = 0; column < totalColumns; column++) {
-//					tileset[row * totalColumns + column] 
-//						= tilesetImage.getSubimage(column * tileWidth, row * tileHeight, tileWidth, tileHeight);
-//				}
-//			}
-//		} 
-//		catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//		catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		
-//    	
-//   	}    
-
-//    private String getTilesetPath(JSONObject jsonLevel) {
-//    	JSONArray tilesetProperties = (JSONArray) jsonLevel.get("tilesets");
-//		JSONObject tilesetsInfo = (JSONObject) tilesetProperties.get(0);  
-//		String tileSetLocation = (String) tilesetsInfo.get("image");
-//		return "assets/" + tileSetLocation;
-//    }
 
     private int getFirstGid(JSONObject jsonLevel) {
     	JSONArray tilesetProperties = (JSONArray) jsonLevel.get("tilesets");

@@ -8,6 +8,7 @@ public class ViewController{
 
     private JFrame mainWindow;
     private DrawSurface drawPanel;
+
     private ModelController modelController;
 
 
@@ -48,6 +49,6 @@ public class ViewController{
 	return this.drawPanel;
     }
     public JFrame getJFrame(){//Implemented method to test render method in JUnit test.
-    return this.mainWindow;
+        return this.mainWindow;
     }
 }

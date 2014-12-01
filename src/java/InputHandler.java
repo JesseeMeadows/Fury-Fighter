@@ -1,7 +1,7 @@
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-/* This class is to handle input from the user. A given class must implement the 
+/* This class is to handle input from the user. A given class must implement the
  * inputResponder interface in order to register, and unregister user controls.
  */
 public class InputHandler implements InputResponder {
@@ -29,14 +29,14 @@ public class InputHandler implements InputResponder {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 			System.exit(0);
 
-		for (InputResponder ir : inputResponders) {
-			ir.keyDownResponse(e);
+		for (int i = 0; i < this.inputResponders.size(); i++) {
+			inputResponders.get(i).keyDownResponse(e);
 		}
 	}
 
 	public void keyUpResponse(KeyEvent e) {
-		for (InputResponder ir : inputResponders) {
-			ir.keyUpResponse(e);
+		for (int i = 0; i < this.inputResponders.size(); i++) {
+			inputResponders.get(i).keyUpResponse(e);
 		}
 	}
 
