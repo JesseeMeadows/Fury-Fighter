@@ -41,6 +41,7 @@ public class PlayerModel extends Model implements InputResponder {
 
 	private int score;
 	private int lives;
+	private long invincibleStart;
 	private int missleLevel;
 	private int laserLevel;
 	private int ringLevel;
@@ -77,6 +78,7 @@ public class PlayerModel extends Model implements InputResponder {
 		// Initial character attribute on creation
 		score = 0;
 		lives = 4;
+		invincibleStart = System.currentTimeMillis() / 1000;
 		missleLevel = 0;
 		ringLevel = 0;
 		laserLevel = 0;
@@ -345,7 +347,7 @@ public class PlayerModel extends Model implements InputResponder {
 				else
 					xPos = oldX + scrollDelta;
 
-				if (xPos < 0)
+				if ((xPos < 0) && ((System.currentTimeMillis() / 1000) - invincibleStart >= 10))
 					levelModel.playerDeath();
 			}
 		}
@@ -481,6 +483,7 @@ public class PlayerModel extends Model implements InputResponder {
 	public void death()
 	{
 		lives -= 1;
+		invincibleStart = System.currentTimeMillis() / 1000;
 
 		// Starting position of character respawn
 		xPos = 64;
