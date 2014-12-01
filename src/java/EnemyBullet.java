@@ -15,7 +15,7 @@ public class EnemyBullet extends Bullet{
 
     public int update(float dt){
 		this.xPos += (this.velocity * this.vectorDirection.getX())*dt;
-		this.yPos += (this.velocity* this.vectorDirection.getX())*dt;
+		this.yPos += (this.velocity* this.vectorDirection.getY())*dt;
 		return 0;
     }
 

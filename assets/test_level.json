@@ -12,7 +12,8 @@
          "y":0
         }, 
         {
-         "height":14,
+         "draworder":"topdown",
+         "height":0,
          "name":"object",
          "objects":[
                 {
@@ -22,6 +23,7 @@
                     {
                      "property":"property-value"
                     },
+                 "rotation":0,
                  "type":"enemy-flyer",
                  "visible":true,
                  "width":32,
@@ -35,16 +37,31 @@
                     {
 
                     },
+                 "rotation":0,
                  "type":"speed-pod",
                  "visible":true,
                  "width":32,
                  "x":576,
                  "y":192
+                }, 
+                {
+                 "height":32,
+                 "name":"",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"boss",
+                 "visible":true,
+                 "width":32,
+                 "x":4551,
+                 "y":202
                 }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":160,
+         "width":0,
          "x":0,
          "y":0
         }, 
@@ -64,6 +81,7 @@
     {
 
     },
+ "renderorder":"right-down",
  "tileheight":32,
  "tilesets":[
         {

@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
+import java.awt.Rectangle;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.JSONArray;
@@ -38,7 +38,8 @@ public class LevelModel extends Model{
     private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active
     private ArrayList<Bullet>     activeBullets;   // Contains active enemy bullets on screen
     private ArrayList<Pickup>     levelPickups;    // Contains active enemy drops on screen
-
+	//public  BossModel boss;// The boss at the end of the level.
+	public  BossModel boss = new BossModel(204,300);// The boss at the end of the level. 	// Temp workaround till bug is fixed
 
 
     public boolean paused;
@@ -62,6 +63,7 @@ public class LevelModel extends Model{
 		activeEnemies = new ArrayList<EnemyModel>();
 		activeBullets = new ArrayList<Bullet>();
 		levelPickups  = new ArrayList<Pickup>();
+		
 
 		// Retrieves Enemies, pickups, and tileMap
 		loadObjects(levelFile, queuedEnemies, levelPickups);
@@ -87,6 +89,8 @@ public class LevelModel extends Model{
 		spawnEnemies();
 
 		playerModel.update(dt, scrollDelta);
+		
+		updateBoss(dt);
 
 		updateEnemies(dt);
 
@@ -127,6 +131,99 @@ public class LevelModel extends Model{
 				i--;
 			}
 
+		}
+	}
+	
+	/** manages the boss. Checks if boss is dead and goes to next level, Check if boss is shot. Flips boss image as necessary and finally handles the boss shooting*/
+	private void updateBoss(float dt){
+
+		if (boss!=null){
+		
+	
+		
+				// Check if boss needs flipped (Boss cannot access the player to get his x and y position so I calculate this here)
+				if (playerModel.getXPos()>boss.getXPos()+30&&boss.direction==false){
+					boss.direction=true;
+					if (boss.curFrame==2){
+						boss.curFrame=1;
+					}
+					else{
+						boss.curFrame=0;
+					}
+				} else if (playerModel.getXPos()<boss.getXPos()+30&&boss.direction==true){
+					boss.direction=false;
+					if (boss.curFrame==1){
+						boss.curFrame=2;
+					} else{
+						boss.curFrame=3;
+					}
+				}
+				//
+				
+				
+				//Check if boss gets shot
+				ArrayList<Bullet> bulletsToRemove= new ArrayList<Bullet>();
+				for (Bullet b:playerModel.getBulletList()){
+					if(boss.checkBullet(b)){
+						bulletsToRemove.add(b);
+					}
+				}
+				playerModel.getBulletList().removeAll(bulletsToRemove);
+				
+				
+				// Check if player is hit by spinning arm
+				// Here I check each piece of arm individually 
+				for (int i=0;i<boss.armPieces.size();i++){
+					// Player dies if he collides with arm
+					if(Utils.boxCollision(new Rectangle(boss.armPieces.get(i).x,boss.armPieces.get(i).y,32,32),playerModel.getBoundingBox())){
+						playerDeath();
+					}
+				}
+				
+				
+				
+				//check if boss is dead (Boss doesn't have enough access to change to a new test level)
+				if (boss.health<=0){
+					modelController.setMainModel(new LevelModel(modelController, "assets/test_level.json"));
+					modelController.getViewController().setMainView(new LevelView(modelController.getViewController(), "assets/test_level.png"));
+
+				}
+				
+				
+				//boss shoots 3 bullets at a time
+				if (boss.shootBullet()){
+				
+						if (boss.direction==false){
+								Vector2 ahead = new Vector2(1,0);         // Shoot forward in the  x direction of the player
+								Vector2 bossPos = new Vector2(0,0);							  
+								Vector2 dir = bossPos.sub(ahead);           								// Creates a vector for bullets travel during its life span
+								
+								
+								activeBullets.add(new EnemyBullet(boss.xPos+8, boss.yPos+19, dir));
+						  
+								activeBullets.add(new EnemyBullet(boss.xPos+5,boss.yPos+47, dir));
+						  
+								activeBullets.add(new EnemyBullet(boss.xPos+8, boss.yPos+72, dir));
+						  
+						} else {
+							
+								Vector2 ahead = new Vector2(0,0);          // Shoot forward in the  x direction of the player
+								Vector2 bossPos = new Vector2(1,0);							  
+								Vector2 dir = bossPos.sub(ahead);           								// Creates a vector for bullets travel during its life span
+								
+								
+								activeBullets.add(new EnemyBullet(boss.xPos+84,boss.yPos+19, dir));
+						  
+								activeBullets.add(new EnemyBullet(boss.xPos+88, boss.yPos+47, dir));
+						  
+						
+								activeBullets.add(new EnemyBullet(boss.xPos+84, boss.yPos+72, dir));
+						  
+						}
+						
+				}
+				
+				boss.update(dt);
 		}
 	}
 
@@ -331,6 +428,9 @@ public class LevelModel extends Model{
 				if (objectType == "enemy-flyer") {
 					enemyQueue.add((EnemyModel) new FlyerModel( ((Number) object.get("x")).intValue(),
 																   ((Number) object.get("y")).intValue()));
+				}
+				else if (objectType == "boss") {
+					//boss = new BossModel( ((Number) object.get("x")).intValue(),((Number) object.get("y")).intValue());
 				}
 				else if (objectType == "speed-pod") {
 					pickupQueue.add(new Pickup( ((Number) object.get("x")).intValue(),

@@ -11,6 +11,7 @@ import java.io.IOException;
 public class LevelView extends View{
     private ViewController viewController;
     private PlayerView playerView;
+	private BossView bossView;
     private LevelModel levelModel;
     private BufferedImage levelMap;    
     
@@ -23,6 +24,7 @@ public class LevelView extends View{
 		viewController = theViewController;
 		levelModel = (LevelModel) viewController.getModelController().getMainModel();
 		playerView = new PlayerView((PlayerModel) viewController.getModelController().getMainModel().getVisibleModels().get("playerModel"));
+	
 		enemyViews = new ArrayList<EnemyView>();
 		levelMap = loadMap(pngMapFile);
 		
@@ -55,6 +57,15 @@ public class LevelView extends View{
 //	    }
 //	}
 		playerView.render(g2, rw, rh);
+		
+		if (bossView==null){
+			if (levelModel.boss!=null){
+				bossView = new BossView(levelModel.boss);
+			}
+		}
+		else{
+			bossView.render(g2, rw, rh);
+		}
 
 		enemyViews.clear();
 		for (int xx = 0; xx < levelModel.getActiveEnemies().size(); xx++) {
