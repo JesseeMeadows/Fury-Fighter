@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
+import java.awt.Rectangle;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.JSONArray;
@@ -61,6 +61,38 @@ public class LevelModel extends Model{
 		
 		paused = false;
 		deathTimer = null;
+    }
+    
+    LevelModel(ModelController theModelController, String fileLocation){
+        modelController = theModelController;
+        levelFile = loadToJson(fileLocation);
+        tileMap = new TileMap(levelFile);
+        playerModel = new PlayerModel(this);
+        theModelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(playerModel);
+        
+        
+        
+        distanceScrolled = 0.0f;
+        scrollVelocity = 0.05f;
+        scrollDelta = 0;
+        
+        queuedEnemies = new ArrayList<EnemyModel>();
+        activeEnemies = new ArrayList<EnemyModel>();
+        activeBullets = new ArrayList<Bullet>();
+        levelPickups  = new ArrayList<Pickup>();
+        
+        
+        // Retrieves Enemies, pickups, and tileMap
+        loadObjects(levelFile, queuedEnemies, levelPickups);
+        
+        paused = false;
+        
+        deathTimer = null;
+        
+        SoundManager.get().playSound("music");
+        
+        mapWidthInPixels = tileMap.getTileMapWidth() * tileMap.getTileWidth();
+        
     }
 
 	public int update(float dt) {
@@ -145,7 +177,6 @@ public class LevelModel extends Model{
 				}
 				//
 				
-				
 				//Check if boss gets shot
 				ArrayList<Bullet> bulletsToRemove= new ArrayList<Bullet>();
 				for (Bullet b:playerModel.getBulletList()){
@@ -161,6 +192,8 @@ public class LevelModel extends Model{
 				for (int i=0;i<boss.armPieces.size();i++){
 					// Player dies if he collides with arm
 					if(Utils.boxCollision(new Rectangle(boss.armPieces.get(i).x,boss.armPieces.get(i).y,32,32),playerModel.getBoundingBox())){
+                        boss.setXPos(300);
+                        boss.theta=0;
 						playerDeath();
 					}
 				}
@@ -170,7 +203,7 @@ public class LevelModel extends Model{
 				//check if boss is dead (Boss doesn't have enough access to change to a new test level)
 				if (boss.health<=0){
 					modelController.setMainModel(new LevelModel(modelController, "assets/test_level.json"));
-					modelController.getViewController().setMainView(new LevelView(modelController.getViewController(), "assets/test_level.png"));
+					modelController.getViewController().setMainView(new LevelView(modelController.getViewController()));
 
 				}
 				
@@ -361,6 +394,43 @@ public class LevelModel extends Model{
 
 		return (JSONObject) JSONValue.parse(json);
 	}
+    
+    
+    /* This function takes a LevelMap which is stored in a JSON file and loads it
+     * --- A JSON file is basically a file that's used to store a ton of different
+     * 	   types of information                                                   */
+    
+    private JSONObject loadToJson(String filename) {
+        BufferedReader filein = null;
+        String linein;
+        String json = "";
+        
+        try {
+            filein = new BufferedReader(new FileReader(filename));
+            while ((linein = filein.readLine()) != null) {
+                json = json + linein;
+            }
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (filein != null) {
+                try {
+                    filein.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        return (JSONObject) JSONValue.parse(json);
+    }
+    
 	
 	public void loadLevel(Level level) {
 		

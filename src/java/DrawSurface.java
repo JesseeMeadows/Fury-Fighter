@@ -28,11 +28,13 @@ public class DrawSurface extends JComponent implements KeyListener {
 	}
 
 	public void keyPressed(KeyEvent e) {
-		this.inputHandler.keyDownResponse(e);
+        if (e!=null)
+            this.inputHandler.keyDownResponse(e);
 	}
 
 	public void keyReleased(KeyEvent e) {
-		this.inputHandler.keyUpResponse(e);
+        if (e!=null)
+            this.inputHandler.keyUpResponse(e);
 	}
 
 	@Override
