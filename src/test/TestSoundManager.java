@@ -9,6 +9,8 @@ public class TestSoundManager{
 		SoundManager.addSound("HiBoss", "assets/snd/BossIntro.wav");
 		SoundManager.addSound("Level", "assets/snd/music.wav");
 		SoundManager.addSound("Boss", "assets/snd/BossMain.wav");
+		SoundManager.addSound("Shoot", "assets/snd/bullet.wav");
+		SoundManager.addSound("Hi", "assets/snd/introjingle.wav");
 	}
 	
 	@Test
@@ -83,5 +85,42 @@ public class TestSoundManager{
 			Thread.currentThread().interrupt();
 		}
 		assertFalse(SoundManager.isPlaying("Boss"));
+	}
+	
+	@Test
+	public void testSetLooping()
+	{
+		assertEquals(1, SoundManager.setLooping("meh", true));
+		assertEquals(0, SoundManager.setLooping("Shoot", true));
+		SoundManager.playSound("Shoot");
+		try {
+			Thread.sleep(1000);//1000 milliseconds is one second.
+		} catch(InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
+		assertTrue(SoundManager.isPlaying("Shoot"));
+		assertFalse(SoundManager.isPlaying("meh"));
+	}
+	
+	@Test
+	public void testSetVolume()
+	{
+		assertEquals(1, SoundManager.setVolume("meh", 50.0f));
+		assertEquals(0, SoundManager.setVolume("Hi", 50.0f));
+		SoundManager.playSound("Hi");
+		try {
+			Thread.sleep(1000);//1000 milliseconds is one second.
+		} catch(InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
+		assertEquals(0, SoundManager.setVolume("Hi", 100.0f));
+		SoundManager.playSound("Hi");
+	}
+	
+	@Test
+	public void testSetPan()
+	{
+		assertEquals(0, SoundManager.setPan("Hi", 50.0f));
+		assertEquals(1, SoundManager.setPan("meh", 50.0f));
 	}
 }
