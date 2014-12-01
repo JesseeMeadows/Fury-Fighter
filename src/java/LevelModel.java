@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.awt.Rectangle;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.JSONArray;
@@ -18,6 +18,7 @@ import java.lang.Number;
  */
 
 public class LevelModel extends Model{
+	
 
     private PlayerModel     playerModel;
     private ModelController modelController;
@@ -30,7 +31,7 @@ public class LevelModel extends Model{
 
     private float distanceScrolled;  // Total distance scrolled from beginning: pixel units
     private float scrollVelocity;    // Speed screen scrolls
-    private int   scrollDelta;         // Distance scrolled the previous frame
+    private int   scrollDelta;       // Distance scrolled the previous frame
 
 
 
@@ -43,39 +44,23 @@ public class LevelModel extends Model{
 
 
     public boolean paused;
+    private MillisecTimer deathTimer;    
+    private enum Level { TEST, FIRST, SECOND };
+    
+    private Level currentLevel;
+    
 
-    private MillisecTimer deathTimer;
-
-    LevelModel(ModelController theModelController, String fileLocation){
-		modelController = theModelController;
-		levelFile = loadToJson(fileLocation);
-		tileMap = new TileMap(levelFile);
-		playerModel = new PlayerModel(this, tileMap);
-		theModelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(playerModel);
-
-
-
-		distanceScrolled = 0.0f;
-		scrollVelocity = 0.05f;
-		scrollDelta = 0;
-
-		queuedEnemies = new ArrayList<EnemyModel>();
-		activeEnemies = new ArrayList<EnemyModel>();
-		activeBullets = new ArrayList<Bullet>();
-		levelPickups  = new ArrayList<Pickup>();
+    LevelModel(ModelController theModelController){
+		modelController = theModelController;			
 		
+		currentLevel = Level.TEST;
 
-		// Retrieves Enemies, pickups, and tileMap
-		loadObjects(levelFile, queuedEnemies, levelPickups);
-
+		loadLevel(currentLevel);
+		playerModel = new PlayerModel(this);
+		theModelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(playerModel);
+		
 		paused = false;
-
 		deathTimer = null;
-
-		SoundManager.get().playSound("music");
-
-		mapWidthInPixels = tileMap.getTileMapWidth() * tileMap.getTileWidth();
-
     }
 
 	public int update(float dt) {
@@ -84,12 +69,12 @@ public class LevelModel extends Model{
 			return 0;
 		}
 
-		mapScroll(dt);
+		updateBackground(dt);
 
 		spawnEnemies();
 
 		playerModel.update(dt, scrollDelta);
-		
+
 		updateBoss(dt);
 
 		updateEnemies(dt);
@@ -104,7 +89,7 @@ public class LevelModel extends Model{
 	/**
 	 * displays rest of the map if there's more to see, -Note: the 33 refers to a buffer space to load
 	 * the enemies off screen to ensure their appearance is natural -- flyer's width is 32 pixels */
-	private void mapScroll(float dt)
+	public void updateBackground(float dt)
 	{
 		boolean endOfLevel = distanceScrolled >= mapWidthInPixels - (ViewController.SCREEN_WIDTH + 33);
 
@@ -119,7 +104,7 @@ public class LevelModel extends Model{
 	}
 
 	/**Adds new enemies to screen(offscreen technically) when their start coordinate(xPos) appears on screen*/
-	private void spawnEnemies()
+	public void spawnEnemies()
 	{
 		for (int i = 0; i < queuedEnemies.size(); i++) {
 			EnemyModel enemy = queuedEnemies.get(i);
@@ -133,7 +118,7 @@ public class LevelModel extends Model{
 
 		}
 	}
-	
+
 	/** manages the boss. Checks if boss is dead and goes to next level, Check if boss is shot. Flips boss image as necessary and finally handles the boss shooting*/
 	private void updateBoss(float dt){
 
@@ -228,7 +213,7 @@ public class LevelModel extends Model{
 	}
 
 	/** Removes dead enemies, updates living/active enemies, and creates enemy bullets*/
-	private void updateEnemies(float dt)
+	public void updateEnemies(float dt)
 	{
 		// for statement:
 		for (int i = 0; i < activeEnemies.size(); i++) {
@@ -260,7 +245,7 @@ public class LevelModel extends Model{
 	}
 
 	/** Checks if any active bullets contact user and deletes those that are off-screen*/
-	private void manageBullets(float dt)
+	public void manageBullets(float dt)
 	{
 		for (int i = 0; i < activeBullets.size(); i++) {
 			if (activeBullets.get(i).shouldDelete()) {
@@ -279,7 +264,7 @@ public class LevelModel extends Model{
 	}
 
 	/** Updates all pickups locations on screen*/
-	private void updatePickups(float dt)
+	public void updatePickups(float dt)
 	{
 		for (int i = 0; i < levelPickups.size(); i++) {
 			levelPickups.get(i).update(dt, scrollDelta);
@@ -332,13 +317,27 @@ public class LevelModel extends Model{
 	 * --- A JSON file is basically a file that's used to store a ton of different
 	 * 	   types of information                                                   */
 
-	private JSONObject loadToJson(String filename) {
+	private JSONObject loadToJson(Level level) {
 		BufferedReader filein = null;
 		String linein;
 		String json = "";
+		String levelPath = "";
+		
+		switch (level) {
+			case TEST:    levelPath = LevelPath.TEST_JSON;
+						  break;
+						
+			case FIRST:   levelPath = LevelPath.FIRST_JSON;
+						  break;
+						 
+			case SECOND:  levelPath = LevelPath.SECOND_JSON;
+						  break;		
+		}
+		
+	
 
 		try {
-			filein = new BufferedReader(new FileReader(filename));
+			filein = new BufferedReader(new FileReader(levelPath));
 			while ((linein = filein.readLine()) != null) {
 				json = json + linein;
 			}
@@ -362,6 +361,29 @@ public class LevelModel extends Model{
 
 		return (JSONObject) JSONValue.parse(json);
 	}
+	
+	public void loadLevel(Level level) {
+		
+		levelFile = loadToJson(level);
+		tileMap = new TileMap(levelFile);
+		
+		distanceScrolled = 0.0f;
+		scrollVelocity = 0.05f;
+		scrollDelta = 0;
+		
+		queuedEnemies = new ArrayList<EnemyModel>();
+		activeEnemies = new ArrayList<EnemyModel>();
+		activeBullets = new ArrayList<Bullet>();
+		levelPickups  = new ArrayList<Pickup>();	
+		
+
+		// Retrieves Enemies, pickups, and tileMap
+		loadObjects(levelFile, queuedEnemies, levelPickups);
+		
+		SoundManager.get().playSound("music");
+		mapWidthInPixels = tileMap.getTileMapWidth() * tileMap.getTileWidth();
+		
+	}
 
     public int getDistanceScrolled(){
 		return (int)distanceScrolled;
@@ -374,9 +396,6 @@ public class LevelModel extends Model{
     public TileMap getTileMap(){
 		return tileMap;
     }
-//    public BufferedImage getTileImage(int idx){
-//		return tileImages[idx];
-//    }
 
     public ModelController getModelController(){
 		return modelController;
@@ -404,15 +423,6 @@ public class LevelModel extends Model{
 		return rv;
     }
 
-//    public BufferedImage compileTileMap(int[] tileReferences, TileSet tileset) {
-//    	int tileWidth  = tileset.getTileWidth();
-//    	int tileHeight = tileset.getTileHeight();
-//    	int tileMapWidth  = tileset.getTileMapWidth();
-//    	int tileMapHeight = tileset.getTileMapHeight();
-//
-//    	BufferedImage tileMap = new BufferedImage()
-//    }
-
     private void loadObjects(JSONObject levelFile, ArrayList<EnemyModel> enemyQueue, ArrayList<Pickup> pickupQueue) {
     	String objectType;
 
@@ -428,9 +438,6 @@ public class LevelModel extends Model{
 				if (objectType == "enemy-flyer") {
 					enemyQueue.add((EnemyModel) new FlyerModel( ((Number) object.get("x")).intValue(),
 																   ((Number) object.get("y")).intValue()));
-				}
-				else if (objectType == "boss") {
-					//boss = new BossModel( ((Number) object.get("x")).intValue(),((Number) object.get("y")).intValue());
 				}
 				else if (objectType == "speed-pod") {
 					pickupQueue.add(new Pickup( ((Number) object.get("x")).intValue(),

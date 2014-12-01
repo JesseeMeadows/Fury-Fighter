@@ -11,22 +11,26 @@ import java.io.IOException;
 public class LevelView extends View{
     private ViewController viewController;
     private PlayerView playerView;
-	private BossView bossView;
+    private BossView bossView;
     private LevelModel levelModel;
     private BufferedImage levelMap;    
     
     private final int screenWidth;
-    private final int screenHeight;
+    private final int screenHeight; 
+    
+    private enum Level { TEST, FIRST, SECOND };
+    private  Level currentLevel;
     
     private ArrayList<EnemyView> enemyViews;
 
-	LevelView(ViewController theViewController, String pngMapFile) {
+	LevelView(ViewController theViewController) {
 		viewController = theViewController;
 		levelModel = (LevelModel) viewController.getModelController().getMainModel();
 		playerView = new PlayerView((PlayerModel) viewController.getModelController().getMainModel().getVisibleModels().get("playerModel"));
-	
 		enemyViews = new ArrayList<EnemyView>();
-		levelMap = loadMap(pngMapFile);
+		
+		currentLevel = Level.TEST;
+		levelMap = loadLevelMap(currentLevel);
 		
 		screenWidth = ViewController.SCREEN_WIDTH;
 	    screenHeight = ViewController.SCREEN_HEIGHT - (2 * levelModel.getTileMap().getTileWidth());
@@ -48,17 +52,10 @@ public class LevelView extends View{
 	
 		BufferedImage currentFrame = getFrame(levelMap);
 		g2.drawImage(currentFrame, 0, 0, screenWidth, screenHeight, null);
-//	
-//	for(int yy =0; yy < screenTileHeight; yy++){
-//	    for(int xx = 0; xx < screenTileWidth; xx++){
-//		int imageIndex = levelModel.getTileMap()[yy * mapWidth + xx];
-//		BufferedImage img = levelModel.getTileImage(imageIndex);
-//		g2.drawImage(img,xx * tileWidth, yy * tileHeight, (int)(tileWidth * rw), (int)(tileHeight * rh), null);
-//	    }
-//	}
+
 		playerView.render(g2, rw, rh);
-		
-		if (bossView==null){
+
+			if (bossView==null){
 			if (levelModel.boss!=null){
 				bossView = new BossView(levelModel.boss);
 			}
@@ -108,10 +105,23 @@ public class LevelView extends View{
 		enemyViews.add(ev);
 	}
 	
-	private BufferedImage loadMap(String pngMapFile) {
+	private BufferedImage loadLevelMap(Level level) {
 		BufferedImage map = null;
+		String pngLevelPath = "";
+
+		switch (level) {
+			case TEST:    pngLevelPath = LevelPath.TEST_PNG;
+						  break;
+						
+			case FIRST:   pngLevelPath = LevelPath.FIRST_PNG;
+						  break;
+						 
+			case SECOND:  pngLevelPath = LevelPath.SECOND_PNG;
+						  break;		
+		}
+		
 		try {
-			map = ImageIO.read(new File(pngMapFile));
+			map = ImageIO.read(new File(pngLevelPath));
 			
 		}
 		catch (IOException e) {
