@@ -39,8 +39,8 @@ public class LevelModel extends Model{
     private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active
     private ArrayList<Bullet>     activeBullets;   // Contains active enemy bullets on screen
     private ArrayList<Pickup>     levelPickups;    // Contains active enemy drops on screen
-	//public  BossModel boss;// The boss at the end of the level.
-	public  BossModel boss = new BossModel(204,300);// The boss at the end of the level. 	// Temp workaround till bug is fixed
+	public  BossModel boss;// The boss at the end of the level.
+	//public  BossModel boss = new BossModel(204,300);// The boss at the end of the level. 	// Temp workaround till bug is fixed
 
 
     public boolean paused;
@@ -278,7 +278,7 @@ public class LevelModel extends Model{
 	public void createEnemyBullet(EnemyModel enemy) {
 		Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());    // Obtains player's location to shoot towards that direction
 		Vector2 enemyPos = new Vector2(enemy.getXPos(), enemy.getYPos());				  // Obtains enemy position at time of shot
-		Vector2 dir = enemyPos.sub(playerPos);                                            // Creates a vector for bullets travel during its life span
+		Vector2 dir = playerPos.sub(enemyPos);                                            // Creates a vector for bullets travel during its life span
 		activeBullets.add(new EnemyBullet(enemy.xPos + (enemy.width / 2), enemy.yPos + (enemy.height / 2), dir));
 	}
 
@@ -288,7 +288,7 @@ public class LevelModel extends Model{
 		for (int i = 0; i < activeBullets.size(); i++) {
 			if (activeBullets.get(i).shouldDelete()) {
 				activeBullets.remove(i);
-				i--; //
+				i--; 
 			}
 			else {
 				Bullet bullet = activeBullets.get(i);

@@ -32,6 +32,8 @@ public class FlyerModel extends EnemyModel{
 		enemyFrames = new BufferedImage[1];
 		try {
 			enemyFrames[0] = ImageIO.read(new File("assets/flyer.png"));
+			width = enemyFrames[0].getWidth();
+			height = enemyFrames[0].getHeight();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
