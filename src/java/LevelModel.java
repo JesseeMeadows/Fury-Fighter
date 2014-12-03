@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.ArrayList;
 
@@ -19,7 +18,7 @@ import java.lang.Number;
  */
 
 public class LevelModel extends Model{
-
+	
 
     private PlayerModel     playerModel;
     private ModelController modelController;
@@ -37,7 +36,7 @@ public class LevelModel extends Model{
 
 
     private ArrayList<EnemyModel> activeEnemies;   // Contains each enemy model that's currently active
-    private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active
+    private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active  
     private ArrayList<Bullet>     activeBullets;   // Contains active enemy bullets on screen
     private ArrayList<Pickup>     levelPickups;    // Contains active enemy drops on screen
 	public  BossModel boss;// The boss at the end of the level.
@@ -45,56 +44,56 @@ public class LevelModel extends Model{
 
 
     public boolean paused;
-    private MillisecTimer deathTimer;
+    private MillisecTimer deathTimer;    
     private enum Level { TEST, FIRST, SECOND };
-
+    
     private Level currentLevel;
-
+    
 
     LevelModel(ModelController theModelController){
-		modelController = theModelController;
-
+		modelController = theModelController;			
+		
 		currentLevel = Level.TEST;
 
 		loadLevel(currentLevel);
 		playerModel = new PlayerModel(this);
 		theModelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(playerModel);
-
+		
 		paused = false;
 		deathTimer = null;
     }
-
+    
     LevelModel(ModelController theModelController, String fileLocation){
         modelController = theModelController;
         levelFile = loadToJson(fileLocation);
         tileMap = new TileMap(levelFile);
         playerModel = new PlayerModel(this);
         theModelController.getViewController().getDrawPanel().getInputHandler().registerInputResponder(playerModel);
-
-
-
+        
+        
+        
         distanceScrolled = 0.0f;
         scrollVelocity = 0.05f;
         scrollDelta = 0;
-
+        
         queuedEnemies = new ArrayList<EnemyModel>();
-        activeEnemies = new ArrayList<EnemyModel>();
+        activeEnemies = new ArrayList<EnemyModel>();        
         activeBullets = new ArrayList<Bullet>();
         levelPickups  = new ArrayList<Pickup>();
-
-
-
+        
+        
+        
         // Retrieves Enemies, pickups, and tileMap
-        loadObjects(levelFile, queuedEnemies, levelPickups);
-
+        loadObjects(levelFile, queuedEnemies, levelPickups);   
+       
         paused = false;
-
+        
         deathTimer = null;
-
+        
         SoundManager.get().playSound("music");
-
+        
         mapWidthInPixels = tileMap.getTileMapWidth() * tileMap.getTileWidth();
-
+        
     }
 
 	public int update(float dt) {
@@ -160,9 +159,9 @@ public class LevelModel extends Model{
 	private void updateBoss(float dt){
 
 		if (boss!=null){
-
-
-
+		
+	
+		
 				// Check if boss needs flipped (Boss cannot access the player to get his x and y position so I calculate this here)
 				if (playerModel.getXPos()>boss.getXPos()+30&&boss.direction==false){
 					boss.direction=true;
@@ -181,7 +180,7 @@ public class LevelModel extends Model{
 					}
 				}
 				//
-
+				
 				//Check if boss gets shot
 				ArrayList<Bullet> bulletsToRemove= new ArrayList<Bullet>();
 				for (Bullet b:playerModel.getBulletList()){
@@ -190,10 +189,10 @@ public class LevelModel extends Model{
 					}
 				}
 				playerModel.getBulletList().removeAll(bulletsToRemove);
-
-
+				
+				
 				// Check if player is hit by spinning arm
-				// Here I check each piece of arm individually
+				// Here I check each piece of arm individually 
 				for (int i=0;i<boss.armPieces.size();i++){
 					// Player dies if he collides with arm
 					if(Utils.boxCollision(new Rectangle(boss.armPieces.get(i).x,boss.armPieces.get(i).y,32,32),playerModel.getBoundingBox())){
@@ -202,9 +201,9 @@ public class LevelModel extends Model{
 						playerDeath();
 					}
 				}
-
-
-
+				
+				
+				
 				//check if boss is dead (Boss doesn't have enough access to change to a new test level)
 				if (boss.health<=0){
 					modelController.setMainModel(new LevelModel(modelController, "assets/underworld.json"));
@@ -214,46 +213,46 @@ public class LevelModel extends Model{
 					sm.stopSound("music");
 
 				}
-
-
+				
+				
 				//boss shoots 3 bullets at a time
 				if (boss.shootBullet()){
-
+				
 						if (boss.direction==false){
 								Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());    // Obtains player's location to shoot towards that direction
-
-								Vector2 enemyPos = new Vector2(boss.xPos+8, boss.yPos+19);
-								Vector2 dir = playerPos.sub(enemyPos);
+						
+								Vector2 enemyPos = new Vector2(boss.xPos+8, boss.yPos+19);	
+								Vector2 dir = playerPos.sub(enemyPos);    
 								activeBullets.add(new EnemyBullet(boss.xPos+8, boss.yPos+19, dir));
-
-								enemyPos = new Vector2(boss.xPos+5, boss.yPos+47);
-								dir = playerPos.sub(enemyPos);
+								
+								enemyPos = new Vector2(boss.xPos+5, boss.yPos+47);	
+								dir = playerPos.sub(enemyPos);    
 								activeBullets.add(new EnemyBullet(boss.xPos+5,boss.yPos+47, dir));
-
-								enemyPos = new Vector2(boss.xPos+8, boss.yPos+72);
-								dir = playerPos.sub(enemyPos);
+								
+								enemyPos = new Vector2(boss.xPos+8, boss.yPos+72);	
+								dir = playerPos.sub(enemyPos);    
 								activeBullets.add(new EnemyBullet(boss.xPos+8, boss.yPos+72, dir));
-
+						  
 						} else {
-
-
+							
+				
 							Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());    // Obtains player's location to shoot towards that direction
-
-								Vector2 enemyPos = new Vector2(boss.xPos+84, boss.yPos+19);
-								Vector2 dir = playerPos.sub(enemyPos);
+						
+								Vector2 enemyPos = new Vector2(boss.xPos+84, boss.yPos+19);	
+								Vector2 dir = playerPos.sub(enemyPos);    
 								activeBullets.add(new EnemyBullet(boss.xPos+84,boss.yPos+19, dir));
-
-								enemyPos = new Vector2(boss.xPos+88, boss.yPos+47);
-								dir = playerPos.sub(enemyPos);
-								activeBullets.add(new EnemyBullet(boss.xPos+88, boss.yPos+47, dir));
-
-								enemyPos = new Vector2(boss.xPos+84, boss.yPos+72);
-								dir = playerPos.sub(enemyPos);
-								activeBullets.add(new EnemyBullet(boss.xPos+84, boss.yPos+72, dir));
+								
+								enemyPos = new Vector2(boss.xPos+88, boss.yPos+47);	
+								dir = playerPos.sub(enemyPos);    
+								activeBullets.add(new EnemyBullet(boss.xPos+88, boss.yPos+47, dir));	
+								
+								enemyPos = new Vector2(boss.xPos+84, boss.yPos+72);	
+								dir = playerPos.sub(enemyPos);    
+								activeBullets.add(new EnemyBullet(boss.xPos+84, boss.yPos+72, dir));  
 						}
-
+						
 				}
-
+				
 				boss.update(dt);
 		}
 	}
@@ -287,7 +286,7 @@ public class LevelModel extends Model{
 			}
 		}
 	}
-
+	
 	public void createEnemyBullet(EnemyModel enemy) {
 		Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());    // Obtains player's location to shoot towards that direction
 		Vector2 enemyPos = new Vector2(enemy.getXPos(), enemy.getYPos());				  // Obtains enemy position at time of shot
@@ -298,15 +297,15 @@ public class LevelModel extends Model{
 	/** Checks if any active bullets contact user and deletes those that are off-screen*/
 	public void manageBullets(float dt)
 	{
-		for (Iterator<Bullet> abi = activeBullets.iterator(); abi.hasNext();) {
-			Bullet currentBullet = abi.next();
-
-			if (currentBullet.shouldDelete()) {
-				abi.remove();
+		for (int i = 0; i < activeBullets.size(); i++) {
+			if (activeBullets.get(i).shouldDelete()) {
+				activeBullets.remove(i);
+				i--; 
 			}
 			else {
-				currentBullet.update(dt);
-				if (currentBullet.collidesWith(playerModel.getBoundingBox())) {
+				Bullet bullet = activeBullets.get(i);
+				bullet.update(dt);
+				if (bullet.collidesWith(playerModel.getBoundingBox())) {
 					playerDeath();
 				}
 
@@ -341,7 +340,7 @@ public class LevelModel extends Model{
 		scrollDelta = 0;
 		activeBullets.clear();
 		activeEnemies.clear();
-		loadObjects(levelFile, queuedEnemies, levelPickups);
+		loadObjects(levelFile, queuedEnemies, levelPickups);   
 
 		// Game Over if player runs out of lives
 		if (playerModel.getLives() < 0) {
@@ -376,19 +375,19 @@ public class LevelModel extends Model{
 		String linein;
 		String json = "";
 		String levelPath = "";
-
+		
 		switch (level) {
 			case TEST:    levelPath = LevelPath.TEST_JSON;
 						  break;
-
+						
 			case FIRST:   levelPath = LevelPath.FIRST_JSON;
 						  break;
-
+						 
 			case SECOND:  levelPath = LevelPath.SECOND_JSON;
-						  break;
+						  break;		
 		}
-
-
+		
+	
 
 		try {
 			filein = new BufferedReader(new FileReader(levelPath));
@@ -415,17 +414,17 @@ public class LevelModel extends Model{
 
 		return (JSONObject) JSONValue.parse(json);
 	}
-
-
+    
+    
     /* This function takes a LevelMap which is stored in a JSON file and loads it
      * --- A JSON file is basically a file that's used to store a ton of different
      * 	   types of information                                                   */
-
+    
     private JSONObject loadToJson(String filename) {
         BufferedReader filein = null;
         String linein;
         String json = "";
-
+        
         try {
             filein = new BufferedReader(new FileReader(filename));
             while ((linein = filein.readLine()) != null) {
@@ -448,34 +447,34 @@ public class LevelModel extends Model{
                 }
             }
         }
-
+        
         return (JSONObject) JSONValue.parse(json);
     }
-
-
+    
+	
 	public void loadLevel(Level level) {
-
+		
 		levelFile = loadToJson(level);
 		tileMap = new TileMap(levelFile);
-
+		
 		distanceScrolled = 0.0f;
 		scrollVelocity = 0.05f;
 		scrollDelta = 0;
-
+		
 		queuedEnemies = new ArrayList<EnemyModel>();
 		activeEnemies = new ArrayList<EnemyModel>();
 		activeBullets = new ArrayList<Bullet>();
-		levelPickups  = new ArrayList<Pickup>();
-
+		levelPickups  = new ArrayList<Pickup>();	
+		
 
 		// Retrieves Enemies, pickups, and tileMap
 		loadObjects(levelFile, queuedEnemies, levelPickups);
-
+		
 		SoundManager.get().playSound("music");
 		mapWidthInPixels = tileMap.getTileMapWidth() * tileMap.getTileWidth();
-
+		
 	}
-
+	
 	private void loadObjects(JSONObject levelFile, ArrayList<EnemyModel> enemyQueue, ArrayList<Pickup> pickupQueue) {
     	String objectType;
     	enemyQueue.clear();
@@ -524,7 +523,7 @@ public class LevelModel extends Model{
     public TileMap getTileMap() {
 		return tileMap;
     }
-
+    
     public float getScrollVelocity() {
     	return scrollVelocity;
     }
@@ -540,11 +539,11 @@ public class LevelModel extends Model{
 	public ArrayList<EnemyModel> getActiveEnemies() {
 		return activeEnemies;
 	}
-
+	
 	public ArrayList<EnemyModel> getQueuedEnemies() {
 		return queuedEnemies;
 	}
-
+	
 	public ArrayList<Bullet> getActiveBullets() {
 		return activeBullets;
 	}
