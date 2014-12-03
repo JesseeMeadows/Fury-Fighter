@@ -32,7 +32,12 @@ public class TileMap {
     }
 
     public int getTile(int gid) {
+        try{
     	return tileMap[gid];
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+            return -9999;
+        }
     }
     
     public int getTileMapWidth() {

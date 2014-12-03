@@ -444,7 +444,9 @@ public class PlayerModel extends Model implements InputResponder {
 
 						// flags bullet to be deleted if it contacts solid tile(besides ring bullets)
 						tile = tileMap.getTile(((tileCoordY) * tileMap.getTileMapWidth()) + (tileCoordX));
-						if (tile < 17 || tile > 23) {
+                    
+                        // Cheap fix here. getTiles returns -9999 if there is a problem.
+						if (tile!=-9999&&tile < 17 || tile > 23) {
 							int yPosInTile = y % tileHeight;
 							int xPosInTile = (x + levelModel.getDistanceScrolled()) % tileWidth;
 							if (!(bullet instanceof RingBullet)) {
