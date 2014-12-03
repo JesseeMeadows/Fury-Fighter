@@ -471,7 +471,10 @@ public class PlayerModel extends Model implements InputResponder {
 							SoundManager.get().playSound("hit");
 						}
 					} else{
-                        levelModel.boss.checkBullet(bullet);
+						if (levelModel.boss != null) {
+							 levelModel.boss.checkBullet(bullet);
+						}
+                       
                     }
 				}
 
