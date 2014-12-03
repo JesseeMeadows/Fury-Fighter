@@ -8,13 +8,13 @@ import java.awt.*;
 
 public class Bullet {
 	private float VELOCITY;
-	
+
 	protected boolean toBeDeleted;
 	protected int xPos; // x-Coordinate of bullet
 	protected int yPos; // y-Coordinate of bullet
 	private int direction;
 	private int millisecDelay;
-	
+
 
 	protected int power; // bullet's damage
 
@@ -53,40 +53,41 @@ public class Bullet {
 
 	// Updates the bullets position based on the bullets velocity and direction
 	public int update(float dt) {
-		
+
 		switch (direction) {
 			case 0:		yPos -= velocity * dt;
 						break;
-						
+
 			case 1:		xPos += velocity * dt;
 						yPos -= velocity * dt;
 						break;
-			
+
 			case 2: 	xPos += velocity * dt;
 						break;
-			
+
 			case 3:		xPos += velocity * dt;
 						yPos += velocity * dt;
 						break;
-			
+
 			case 4: 	yPos += velocity * dt;
 						break;
-				
+
 			case 5:		xPos -= this.velocity * dt;
 						yPos += this.velocity * dt;
 						break;
-			
+
 			case 6:		xPos -= velocity * dt;
 						break;
-			
+
 			case 7:		xPos -= velocity * dt;
 						yPos -= velocity * dt;
-						break;			
+						break;
 		}
 		return 0;
 	}
 
 	// returns true if bullet of off screen
+	/* TODO: I don't trust the screen edge logic in this method, but its the best we have with no documentation. */
 	public boolean shouldDelete() {
 		if (this.xPos > ViewController.SCREEN_WIDTH + 10 || this.xPos < -10 || this.yPos > ViewController.SCREEN_HEIGHT - (64 + this.bulletImage.getHeight() + 32 ) || this.yPos < 32) {
 			return true;
@@ -103,7 +104,7 @@ public class Bullet {
 	public int getMillisecDelay() {
 		return this.millisecDelay;
 	}
-	
+
 	public int getDirection() {
 		return direction;
 	}
