@@ -1,5 +1,7 @@
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.ArrayList;
 
@@ -38,7 +40,8 @@ public class LevelModel extends Model{
 
     private ArrayList<EnemyModel> activeEnemies;   // Contains each enemy model that's currently active
     private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active
-    private ArrayList<Bullet>     activeBullets;   // Contains active enemy bullets on screen
+    private ArrayList<Bullet>     activeBulletsUnsafe;
+    private List<Bullet>          activeBullets;   // Contains active enemy bullets on screen
     private ArrayList<Pickup>     levelPickups;    // Contains active enemy drops on screen
 	public  BossModel boss;// The boss at the end of the level.
 	//public  BossModel boss = new BossModel(204,300);// The boss at the end of the level. 	// Temp workaround till bug is fixed
@@ -52,6 +55,9 @@ public class LevelModel extends Model{
 
 
     LevelModel(ModelController theModelController){
+    	activeBulletsUnsafe = new ArrayList<Bullet>();
+        activeBullets = Collections.synchronizedList(activeBulletsUnsafe);
+
 		modelController = theModelController;
 
 		currentLevel = Level.TEST;
@@ -79,7 +85,8 @@ public class LevelModel extends Model{
 
         queuedEnemies = new ArrayList<EnemyModel>();
         activeEnemies = new ArrayList<EnemyModel>();
-        activeBullets = new ArrayList<Bullet>();
+        activeBulletsUnsafe = new ArrayList<Bullet>();
+        activeBullets = Collections.synchronizedList(activeBulletsUnsafe);
         levelPickups  = new ArrayList<Pickup>();
 
 
@@ -298,18 +305,20 @@ public class LevelModel extends Model{
 	/** Checks if any active bullets contact user and deletes those that are off-screen*/
 	public void manageBullets(float dt)
 	{
-		for (Iterator<Bullet> abi = activeBullets.iterator(); abi.hasNext();) {
-			Bullet currentBullet = abi.next();
+		synchronized(activeBullets) {
+			for (Iterator<Bullet> abi = activeBullets.iterator(); abi.hasNext();) {
+				Bullet currentBullet = abi.next();
 
-			if (currentBullet.shouldDelete()) {
-				abi.remove();
-			}
-			else {
-				currentBullet.update(dt);
-				if (currentBullet.collidesWith(playerModel.getBoundingBox())) {
-					playerDeath();
+				if (currentBullet.shouldDelete()) {
+					abi.remove();
 				}
+				else {
+					currentBullet.update(dt);
+					if (currentBullet.collidesWith(playerModel.getBoundingBox())) {
+						playerDeath();
+					}
 
+				}
 			}
 		}
 	}
@@ -464,7 +473,8 @@ public class LevelModel extends Model{
 
 		queuedEnemies = new ArrayList<EnemyModel>();
 		activeEnemies = new ArrayList<EnemyModel>();
-		activeBullets = new ArrayList<Bullet>();
+		activeBulletsUnsafe = new ArrayList<Bullet>();
+        activeBullets = Collections.synchronizedList(activeBulletsUnsafe);
 		levelPickups  = new ArrayList<Pickup>();
 
 
@@ -545,10 +555,12 @@ public class LevelModel extends Model{
 		return queuedEnemies;
 	}
 
-	public ArrayList<Bullet> getActiveBullets() {
+	public List<Bullet> getActiveBullets() {
 		return activeBullets;
 	}
-    public ArrayList<Bullet> getEnemyBullets(){
+
+	/* TODO: Is returning activeBullets correct here? */
+    public List<Bullet> getEnemyBullets(){
 	return activeBullets;
     }
 
