@@ -205,8 +205,11 @@ public class LevelModel extends Model{
 				
 				//check if boss is dead (Boss doesn't have enough access to change to a new test level)
 				if (boss.health<=0){
-					modelController.setMainModel(new LevelModel(modelController, "assets/test_level.json"));
-					modelController.getViewController().setMainView(new LevelView(modelController.getViewController()));
+					modelController.setMainModel(new LevelModel(modelController, "assets/underworld.json"));
+					modelController.getViewController().setMainView(new LevelView(modelController.getViewController(), "next"));
+					SoundManager sm = SoundManager.get();
+					sm.playSound("underworld");
+					sm.stopSound("music");
 
 				}
 				

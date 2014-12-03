@@ -35,6 +35,20 @@ public class LevelView extends View{
 		screenWidth = ViewController.SCREEN_WIDTH;
 	    screenHeight = ViewController.SCREEN_HEIGHT - (2 * levelModel.getTileMap().getTileWidth());
 	}
+	
+	LevelView(ViewController theViewController, String next ) {
+		viewController = theViewController;
+		levelModel = (LevelModel) viewController.getModelController().getMainModel();
+		playerView = new PlayerView((PlayerModel) viewController.getModelController().getMainModel().getVisibleModels().get("playerModel"));
+		enemyViews = new ArrayList<EnemyView>();
+		
+		currentLevel = Level.SECOND;
+		levelMap = loadLevelMap(currentLevel);
+		
+		screenWidth = ViewController.SCREEN_WIDTH;
+	    screenHeight = ViewController.SCREEN_HEIGHT - (2 * levelModel.getTileMap().getTileWidth());
+	}
+	
     public void render(Graphics2D g2, float rw, float rh){
 	
 		if (levelModel.getDeathTimerDt() > 0) {

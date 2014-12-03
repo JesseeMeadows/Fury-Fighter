@@ -85,7 +85,7 @@ public class Bullet {
 
 	// returns true if bullet of off screen
 	public boolean shouldDelete() {
-		if (this.xPos > ViewController.SCREEN_WIDTH + 10 || this.xPos < -10 || this.yPos > ViewController.SCREEN_HEIGHT - (64 + this.bulletImage.getHeight() + 32 ) || this.yPos < -10) {
+		if (this.xPos > ViewController.SCREEN_WIDTH + 10 || this.xPos < -10 || this.yPos > ViewController.SCREEN_HEIGHT - (64 + this.bulletImage.getHeight() + 32 ) || this.yPos < 32) {
 			return true;
 		}
 		else {

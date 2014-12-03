@@ -15,9 +15,11 @@ public class main {
         sm.addSound("death", "assets/snd/death.wav");
         sm.addSound("kill", "assets/snd/kill.wav");
         sm.addSound("music", "assets/snd/music.wav");
+		sm.addSound("underworld", "assets/snd/Underworld_Theme.wav");
         sm.addSound("pickup", "assets/snd/pickup.wav");
         sm.addSound("fragment", "assets/snd/fragment.wav");
         sm.setLooping("music", true);
+		sm.setLooping("underworld", true);
 
 		ModelController modelController = new ModelController(null);
 		ViewController viewController = new ViewController(modelController);

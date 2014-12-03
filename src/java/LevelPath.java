@@ -13,8 +13,8 @@ public final class LevelPath {
 	public static final String FIRST_PNG = "";
 	
 	// Second level
-	public static final String SECOND_JSON = "";
-	public static final String SECOND_PNG = "";
+	public static final String SECOND_JSON = "assets/underworld.json";
+	public static final String SECOND_PNG = "assets/underworld.png";
 	
 
 	private LevelPath()
