@@ -55,7 +55,7 @@
                  "type":"boss",
                  "visible":true,
                  "width":32,
-                 "x":4551,
+                 "x":4351,
                  "y":202
                 }, 
                 {
@@ -253,34 +253,6 @@
                  "width":32,
                  "x":3844,
                  "y":72
-                }, 
-                {
-                 "height":32,
-                 "name":"",
-                 "properties":
-                    {
-                     "property":"property-value"
-                    },
-                 "rotation":0,
-                 "type":"enemy-flyer",
-                 "visible":true,
-                 "width":32,
-                 "x":4347,
-                 "y":74
-                }, 
-                {
-                 "height":32,
-                 "name":"",
-                 "properties":
-                    {
-                     "property":"property-value"
-                    },
-                 "rotation":0,
-                 "type":"enemy-flyer",
-                 "visible":true,
-                 "width":32,
-                 "x":4343,
-                 "y":355
                 }],
          "opacity":1,
          "type":"objectgroup",
