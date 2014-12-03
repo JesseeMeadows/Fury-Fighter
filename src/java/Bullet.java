@@ -8,11 +8,13 @@ import java.awt.*;
 
 public class Bullet {
 	private float VELOCITY;
-
+	
+	protected boolean toBeDeleted;
 	protected int xPos; // x-Coordinate of bullet
 	protected int yPos; // y-Coordinate of bullet
 	private int direction;
 	private int millisecDelay;
+	
 
 	protected int power; // bullet's damage
 
@@ -27,6 +29,7 @@ public class Bullet {
 		this.direction = direction;
 		velocity = 0.5f;
 		power = 1;
+		toBeDeleted = false;
 
 		// loads bullet's image -- should be cached instead
 		try {
@@ -88,6 +91,9 @@ public class Bullet {
 		if (this.xPos > ViewController.SCREEN_WIDTH + 10 || this.xPos < -10 || this.yPos > ViewController.SCREEN_HEIGHT - (64 + this.bulletImage.getHeight() + 32 ) || this.yPos < 32) {
 			return true;
 		}
+		else if (toBeDeleted == true) {
+			return true;
+		}
 		else {
 			return false;
 		}
@@ -96,6 +102,10 @@ public class Bullet {
 
 	public int getMillisecDelay() {
 		return this.millisecDelay;
+	}
+	
+	public int getDirection() {
+		return direction;
 	}
 
 	public int getPower() {

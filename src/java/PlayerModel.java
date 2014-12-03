@@ -55,6 +55,8 @@ public class PlayerModel extends Model implements InputResponder {
 	public enum BulletType {
 		RING, MISSLE, LASER, BASIC
 	}
+	
+	private enum TileCorner { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT };
 
 	private BulletType bulletType;
 
@@ -247,24 +249,15 @@ public class PlayerModel extends Model implements InputResponder {
 								SoundManager.get().playSound("bullet");
 								break;
 
-				case RING:		
-								fireBasic();
-								fireRing();
-								SoundManager.get().playSound("bullet");
+				case RING:		fireRing();
 								SoundManager.get().playSound("ring");
 								break;
 
-				case MISSLE:	
-								fireBasic();
-								fireMissle();
-								SoundManager.get().playSound("bullet");
+				case MISSLE:	fireMissle();
 								SoundManager.get().playSound("missle");
 								break;
 
-				case LASER:		
-								fireBasic();
-								fireLaser();
-								SoundManager.get().playSound("bullet");
+				case LASER:		fireLaser();
 								SoundManager.get().playSound("laser");
 								break;
 			}
@@ -431,7 +424,9 @@ public class PlayerModel extends Model implements InputResponder {
 				int tileCoordX;
 				int tileCoordY;
 				int tile;
-				boolean deleted = false;
+				int tileWidth = tileMap.getTileWidth();
+				int tileHeight = tileMap.getTileHeight();					
+				
 
 				/*
 				 * nested four loop only is grabbing the 4 corners of the
@@ -443,23 +438,78 @@ public class PlayerModel extends Model implements InputResponder {
 				 */
 				for (int y = bullet.yPos; y <= bullet.yPos + boundingBox.getHeight(); y += boundingBox.getHeight()) {
 				for (int x = bullet.xPos; x <= bullet.xPos + boundingBox.getWidth(); x += boundingBox.getWidth()) {
-						tileCoordX = (x + levelModel.getDistanceScrolled()) / tileMap.getTileWidth();
-						tileCoordY = y / tileMap.getTileHeight();
+						tileCoordX = (x + levelModel.getDistanceScrolled()) / tileWidth;
+						tileCoordY = y / tileHeight;
 
 
 						// flags bullet to be deleted if it contacts solid tile(besides ring bullets)
 						tile = tileMap.getTile(((tileCoordY) * tileMap.getTileMapWidth()) + (tileCoordX));
 						if (tile < 17 || tile > 23) {
-							if (!(bullet instanceof RingBullet))
-								deleted = true;
+							int yPosInTile = y % tileHeight;
+							int xPosInTile = (x + levelModel.getDistanceScrolled()) % tileWidth;
+							if (!(bullet instanceof RingBullet)) {	
+								bullet.toBeDeleted = true;
+								
+								switch (bullet.getDirection()) {
+									case 0:		bullet.yPos = bullet.yPos + (tileHeight - yPosInTile) + 1;
+												break;
+												
+									case 1:		if (xPosInTile < tileHeight - yPosInTile) {
+													bullet.xPos = bullet.xPos - xPosInTile - 1;
+													bullet.yPos = bullet.yPos + xPosInTile + 1;
+													 	
+												}
+												else {
+													bullet.xPos = bullet.xPos - (tileHeight - yPosInTile) - 1;
+													bullet.yPos = bullet.yPos + (tileHeight - yPosInTile) + 1;													
+												}
+												break;
+									
+									case 2: 	bullet.xPos = bullet.xPos - xPosInTile - 1;
+												break;
+									
+									case 3:		if (xPosInTile < yPosInTile) {
+													bullet.xPos = bullet.xPos - xPosInTile - 1;
+													bullet.yPos = bullet.yPos - xPosInTile - 1;
+												}
+												else {
+													bullet.xPos = bullet.xPos - yPosInTile - 1;
+													bullet.yPos = bullet.yPos - yPosInTile - 1;
+												}
+												break;
+									
+									case 4: 	bullet.yPos = bullet.yPos - yPosInTile - 1;
+												break;
+										
+									case 5:		if (tileWidth - xPosInTile < yPosInTile) {
+													bullet.xPos = bullet.xPos + (tileWidth - xPosInTile) + 1;
+													bullet.yPos = bullet.yPos - (tileWidth - xPosInTile) - 1;
+												}
+												else {
+													bullet.xPos = bullet.xPos + yPosInTile + 1;
+													bullet.yPos = bullet.yPos - yPosInTile - 1;
+												}
+												break;
+									
+									case 6:		bullet.xPos = bullet.xPos + (tileWidth - xPosInTile);
+												break;
+									
+									case 7:		if (tileWidth - xPosInTile < tileHeight - yPosInTile) {
+													bullet.xPos = bullet.xPos + (tileWidth - xPosInTile) + 1;
+													bullet.yPos = bullet.yPos + (tileWidth - xPosInTile) + 1;
+												}
+												else {
+													bullet.xPos = bullet.xPos + (tileHeight - yPosInTile) + 1;
+													bullet.yPos = bullet.yPos + (tileHeight - yPosInTile) + 1;
+												}
+												break;
+								}
+								
+							}
 						}
 
 					}
-				}
-				if (deleted) {
-					iterator.remove();
-					continue;
-				}
+				}				
 				/*
 				 * For loop: Determines if a bullet contacts an enemy On
 				 * contact: Damages/kills enemy and is deleted unless it's a
