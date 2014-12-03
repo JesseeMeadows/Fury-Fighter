@@ -432,8 +432,8 @@ public class PlayerModel extends Model implements InputResponder {
 				 * 1-4 A bullet expires on contact with a solid object(besides
 				 * ring bullets)
 				 */
-				for (int y = bullet.yPos; y < bullet.yPos + boundingBox.getHeight(); y += boundingBox.getHeight()) {
-				for (int x = bullet.xPos; x < bullet.xPos + boundingBox.getWidth(); x += boundingBox.getWidth()) {
+				for (int y = bullet.yPos; y <= bullet.yPos + boundingBox.getHeight(); y += boundingBox.getHeight()) {
+				for (int x = bullet.xPos; x <= bullet.xPos + boundingBox.getWidth(); x += boundingBox.getWidth()) {
 						tileCoordX = (x + levelModel.getDistanceScrolled()) / tileMap.getTileWidth();
 						tileCoordY = y / tileMap.getTileHeight();
 
