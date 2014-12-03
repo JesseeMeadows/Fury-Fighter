@@ -36,7 +36,7 @@ public class LevelModel extends Model{
 
 
     private ArrayList<EnemyModel> activeEnemies;   // Contains each enemy model that's currently active
-    private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active
+    private ArrayList<EnemyModel> queuedEnemies;   // Contains enemies waiting to be active  
     private ArrayList<Bullet>     activeBullets;   // Contains active enemy bullets on screen
     private ArrayList<Pickup>     levelPickups;    // Contains active enemy drops on screen
 	public  BossModel boss;// The boss at the end of the level.
@@ -77,14 +77,15 @@ public class LevelModel extends Model{
         scrollDelta = 0;
         
         queuedEnemies = new ArrayList<EnemyModel>();
-        activeEnemies = new ArrayList<EnemyModel>();
+        activeEnemies = new ArrayList<EnemyModel>();        
         activeBullets = new ArrayList<Bullet>();
         levelPickups  = new ArrayList<Pickup>();
         
         
-        // Retrieves Enemies, pickups, and tileMap
-        loadObjects(levelFile, queuedEnemies, levelPickups);
         
+        // Retrieves Enemies, pickups, and tileMap
+        loadObjects(levelFile, queuedEnemies, levelPickups);   
+       
         paused = false;
         
         deathTimer = null;
@@ -339,6 +340,7 @@ public class LevelModel extends Model{
 		scrollDelta = 0;
 		activeBullets.clear();
 		activeEnemies.clear();
+		loadObjects(levelFile, queuedEnemies, levelPickups);   
 
 		// Game Over if player runs out of lives
 		if (playerModel.getLives() < 0) {
@@ -475,6 +477,8 @@ public class LevelModel extends Model{
 	
 	private void loadObjects(JSONObject levelFile, ArrayList<EnemyModel> enemyQueue, ArrayList<Pickup> pickupQueue) {
     	String objectType;
+    	enemyQueue.clear();
+    	pickupQueue.clear();
 
     	JSONArray layersArray = (JSONArray) levelFile.get("layers");
 		JSONObject objectLayer = (JSONObject) layersArray.get(1);
