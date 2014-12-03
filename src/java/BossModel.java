@@ -23,7 +23,7 @@ public class BossModel extends EnemyModel{
 	public int speed =1; // Speed changes at low life.	
 	public int xdir=1; // 1 or -1 depending on direction
 	public int ydir=-1; // 1 or -1 depending on direction
-	public int health =21; 
+	public int health =100; 
 	public int curFrame=3; // The 3rd and 4th frames are the ones that face left.
 	public double dir = Math.random()+.01;
 	public boolean direction=false; // False is standard direction (player starts on the left of the boss). True means flipped to keep it facing the player. (ie this boolean tells if the direction is flipped)
@@ -105,12 +105,12 @@ public class BossModel extends EnemyModel{
 		if (lowlife){
 			theta-=.07;
 			
-			yPos -= .09*dir*speed*ydir *dt;              // moves boss
+			yPos -= .09*dir*speed*ydir *dt;              // moves boss y only
 		}
 		else{
 			theta+=.035;
-			xPos -= .09*dir*speed*xdir* dt;              // moves boss
-			yPos -= .09*dir*speed*ydir * dt;              // moves boss
+			xPos -= .09*dir*speed*xdir* dt;              // moves boss x
+			yPos -= .09*dir*speed*ydir * dt;              // moves boss y
 		}
 
 		

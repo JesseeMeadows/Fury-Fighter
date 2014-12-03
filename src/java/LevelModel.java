@@ -146,6 +146,9 @@ public class LevelModel extends Model{
 				activateEnemy(enemy);
 				queuedEnemies.remove(i);
 				i--;
+				if (enemy instanceof BossModel){
+					boss=(BossModel) enemy;
+				}
 			}
 
 		}
@@ -212,31 +215,36 @@ public class LevelModel extends Model{
 				if (boss.shootBullet()){
 				
 						if (boss.direction==false){
-								Vector2 ahead = new Vector2(1,0);         // Shoot forward in the  x direction of the player
-								Vector2 bossPos = new Vector2(0,0);							  
-								Vector2 dir = bossPos.sub(ahead);           								// Creates a vector for bullets travel during its life span
-								
-								
+								Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());    // Obtains player's location to shoot towards that direction
+						
+								Vector2 enemyPos = new Vector2(boss.xPos+8, boss.yPos+19);	
+								Vector2 dir = playerPos.sub(enemyPos);    
 								activeBullets.add(new EnemyBullet(boss.xPos+8, boss.yPos+19, dir));
-						  
+								
+								enemyPos = new Vector2(boss.xPos+5, boss.yPos+47);	
+								dir = playerPos.sub(enemyPos);    
 								activeBullets.add(new EnemyBullet(boss.xPos+5,boss.yPos+47, dir));
-						  
+								
+								enemyPos = new Vector2(boss.xPos+8, boss.yPos+72);	
+								dir = playerPos.sub(enemyPos);    
 								activeBullets.add(new EnemyBullet(boss.xPos+8, boss.yPos+72, dir));
 						  
 						} else {
 							
-								Vector2 ahead = new Vector2(0,0);          // Shoot forward in the  x direction of the player
-								Vector2 bossPos = new Vector2(1,0);							  
-								Vector2 dir = bossPos.sub(ahead);           								// Creates a vector for bullets travel during its life span
-								
-								
-								activeBullets.add(new EnemyBullet(boss.xPos+84,boss.yPos+19, dir));
-						  
-								activeBullets.add(new EnemyBullet(boss.xPos+88, boss.yPos+47, dir));
-						  
+				
+							Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());    // Obtains player's location to shoot towards that direction
 						
-								activeBullets.add(new EnemyBullet(boss.xPos+84, boss.yPos+72, dir));
-						  
+								Vector2 enemyPos = new Vector2(boss.xPos+84, boss.yPos+19);	
+								Vector2 dir = playerPos.sub(enemyPos);    
+								activeBullets.add(new EnemyBullet(boss.xPos+84,boss.yPos+19, dir));
+								
+								enemyPos = new Vector2(boss.xPos+88, boss.yPos+47);	
+								dir = playerPos.sub(enemyPos);    
+								activeBullets.add(new EnemyBullet(boss.xPos+88, boss.yPos+47, dir));	
+								
+								enemyPos = new Vector2(boss.xPos+84, boss.yPos+72);	
+								dir = playerPos.sub(enemyPos);    
+								activeBullets.add(new EnemyBullet(boss.xPos+84, boss.yPos+72, dir));  
 						}
 						
 				}
@@ -478,7 +486,9 @@ public class LevelModel extends Model{
 					enemyQueue.add((EnemyModel) new FlyerModel( ((Number) object.get("x")).intValue(),
 																   ((Number) object.get("y")).intValue()));
 				}
-				else if (objectType.equals("speed-pod")) {
+				else if (objectType.equals("boss")) {
+					enemyQueue.add(new BossModel(((Number) object.get("x")).intValue(),((Number) object.get("y")).intValue()));
+				}else if (objectType.equals("speed-pod")) {
 					pickupQueue.add(new Pickup( ((Number) object.get("x")).intValue(),
 											     ((Number) object.get("y")).intValue(),
 											     "speed", "assets/speedPickupImage.png"));
