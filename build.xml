@@ -94,7 +94,10 @@
     	</exec>
     </target>
 
-	<target name="furyFighterCheckout" depends="git-pull" />
+	<target name="furyFighterCheckout" depends="git-pull, clean.java">
+		<antcall target="compile.java" />
+		<antcall target="compile.test" />
+	</target>
 
 	<target name="build" depends="furyFighterCheckout, compile.java" />
 	<target name="buildLocal" depends="compile.java" />
