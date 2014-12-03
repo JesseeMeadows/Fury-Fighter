@@ -45,7 +45,7 @@ public class GameOverModel extends Model implements InputResponder{
 			// Restart Level
 			if (choice == 0) {
 				unregisterGameoverInput();
-				setLevelModel("assets/test_level.json");
+				setLevelModel("assets/test_level2.json");
 				setLevelView("assets/test_level.png");
 			}
 			// Goto Title Screen

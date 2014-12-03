@@ -5,7 +5,7 @@
 public final class LevelPath {
 	
 	// Test Level
-	public static final String TEST_JSON = "assets/test_level.json";
+	public static final String TEST_JSON = "assets/test_level2.json";
 	public static final String TEST_PNG = "assets/test_level.png";
 	
 	// First level

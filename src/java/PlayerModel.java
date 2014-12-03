@@ -247,15 +247,24 @@ public class PlayerModel extends Model implements InputResponder {
 								SoundManager.get().playSound("bullet");
 								break;
 
-				case RING:		fireRing();
+				case RING:		
+								fireBasic();
+								fireRing();
+								SoundManager.get().playSound("bullet");
 								SoundManager.get().playSound("ring");
 								break;
 
-				case MISSLE:	fireMissle();
+				case MISSLE:	
+								fireBasic();
+								fireMissle();
+								SoundManager.get().playSound("bullet");
 								SoundManager.get().playSound("missle");
 								break;
 
-				case LASER:		fireLaser();
+				case LASER:		
+								fireBasic();
+								fireLaser();
+								SoundManager.get().playSound("bullet");
 								SoundManager.get().playSound("laser");
 								break;
 			}

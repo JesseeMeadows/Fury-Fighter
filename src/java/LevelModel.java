@@ -498,8 +498,10 @@ public class LevelModel extends Model{
 								   				 ((Number) object.get("y")).intValue(),
 								   				  "defense_pod", "assets/defensePodImage.png"));
 				}
-
-
+				else if (objectType.equals("boss")) {
+					enemyQueue.add((EnemyModel) new BossModel( ((Number) object.get("x")).intValue(),
+																   ((Number) object.get("y")).intValue()));
+				}
 			}
     }
 

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="160" height="14" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="background" tilewidth="32" tileheight="32">
+  <image source="tileset.png" width="256" height="192"/>
+ </tileset>
+ <layer name="background" width="160" height="14">
+  <data encoding="base64" compression="zlib">
+   eJztWtuSoyAQ5ReMM+bJSDLzEvH/v2+hilM5eyQbLz3E2t2HUyINfbPFxmZyzt0jQsQYMWWMGSHTp9wONJ6vzGPM9+Cn4+7CE3ImGs/0u/AJNF71ZLmgaz/zG6V/LPQFN7eTeStPjGfZk/BkWUHazDvIXPbR6OZ6TCJvlLY+C8hknbWt+pd8VIodtVnlJnxEfEZ0EeeIJuIU0RrT+ohLZXk+YsjtIWMrz1vGNeIr4/bDNpyy7rV8toWmcYU1Y3ox7zOP+Vvj75Tlcez1O3imuPsW1Ig/X9lnNWmhoiysR7Xt5nXQav1D++uHbGgy/fwmn9Wgpf5/If4SLcXdJcs/0jNYQhsqyON3y9KGM/V/5Htc05ya319v4Ev4aYsu8MERY4xpvXvkKnhnlvL0K+VxLvtNbUv7ON44DhNqr3974u/mfs+7jhArR6IhVvsV89inwNVQT8RcaR1IfTXjD3uBrTzxjv6PvznNu0d+e1k47+qe76ms9Gzp2lAbY+6GsoYX87zbl//tjb8m37dGz/zdNNDxreYcd60/AfxTstITfkd/S0j3Fuufd+vX/a005CdL52HN9dS20qV7Ma8nIDYQJ97QL554w8al+cxVcDN+fgC+uy2Ns9h/ePKvN3qulvsd/t57t2//i1xdr1v3GFa2c0yvib8aNH5PuzyuyWMSfe/3F7bj3+5R7MbzsORZytW37sUHQ9t1jT0b8LRc/zjf6YS+J/68e+S9a/KOWvFnzZNrbvy/7J3rH/zv3SMPrO3rUo0bwP63IT4d8dIats7nGnpw8zq11r25dv2s5qzjSzV4rb9rLZ514Hpjqdb+7OwBn23QmvufzkCUzi+wniU7SrbwteR71b/k99L5AKXpuQ8+5zEJT9ZFdR3d3G9B+I2urG/pfArovwDpM9cj
+  </data>
+ </layer>
+ <objectgroup name="object">
+  <object type="enemy-flyer" x="960" y="160" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="speed-pod" x="576" y="192" width="32" height="32"/>
+  <object type="boss" x="4551" y="202" width="32" height="32"/>
+  <object type="enemy-flyer" x="1164" y="79" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="1287" y="155" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="1627" y="83" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="1628" y="350" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="2151" y="67" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="2238" y="209" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="2145" y="333" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="2463" y="145" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="3064" y="62" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="2905" y="356" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="3147" y="119" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="3475" y="370" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="3474" y="255" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="3844" y="72" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="4347" y="74" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+  <object type="enemy-flyer" x="4343" y="355" width="32" height="32">
+   <properties>
+    <property name="property" value="property-value"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer name="collision" width="160" height="14">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20ON6AAAAAAAAAAAODXACMAAAE=
+  </data>
+ </layer>
+</map>
