@@ -243,10 +243,10 @@ public class PlayerModel extends Model implements InputResponder {
 	    // x => fire weapon
 		if (xDown == true && bulletTimer.getDt() > 250) {
 				bulletTimer.reset();
+				fireBasic();
 
 				switch(bulletType) {
-				case BASIC:		fireBasic();
-								SoundManager.get().playSound("bullet");
+				case BASIC:		SoundManager.get().playSound("bullet");
 								break;
 
 				case RING:		fireRing();
