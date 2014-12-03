@@ -93,7 +93,7 @@ public class PlayerModel extends Model implements InputResponder {
 		// Note movement updates at milliseconds since last frame(~33) *
 		// velocity(.1)
 		// 33 * .1 = 3.3 pixels moved per frame, which meets the specification
-		velocity = .1f;
+		velocity = .15f;
 
 		bulletList = new ArrayList<Bullet>();
 		bulletTimer = new MillisecTimer();
@@ -565,7 +565,7 @@ public class PlayerModel extends Model implements InputResponder {
 		defensePodOscillator = 0;
 		cobaltTimer = null;
 
-		velocity = .1f;
+		velocity = .15f;
 
 		bulletList.clear();
 		bulletTimer = new MillisecTimer();
@@ -586,7 +586,7 @@ public class PlayerModel extends Model implements InputResponder {
 
 	private void fireBasic()
 	{
-		bulletList.add(new Bullet(xPos + (spriteWidth / 2), yPos + (spriteHeight / 2), curFrame));
+        bulletList.add(new Bullet(xPos-5 + (spriteWidth / 2), yPos-14 + (spriteHeight / 2), curFrame));
 	}
 
 	private void fireRing()
