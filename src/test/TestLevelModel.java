@@ -1,7 +1,6 @@
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Test;
 import org.junit.Before;
@@ -129,60 +128,57 @@ public class TestLevelModel {
 
 	@Test
 	public void testManageBullets() {
-		List<Bullet> activeBullets = levelModel.getActiveBullets();
+		ArrayList<Bullet> activeBullets = levelModel.getActiveBullets();
+		activeBullets.clear();
 
-		synchronized(activeBullets) {
-			activeBullets.clear();
+		Bullet northPreEdge = new Bullet(0, 32, 0);
+		Bullet northOnEdge  = new Bullet(0, -11, 0);
+		Bullet eastPreEdge  = new Bullet(ViewController.SCREEN_WIDTH + 10, 100, 0);
+		Bullet eastOnEdge   = new Bullet(ViewController.SCREEN_WIDTH + 11, 100, 0);
+		Bullet southPreEdge = new Bullet(0, ViewController.SCREEN_HEIGHT - (64 + 8 + 32), 0);   // 72 = tile + bullet's image height
+		Bullet southOnEdge  = new Bullet(0, ViewController.SCREEN_HEIGHT -71, 0);
+		Bullet westPreEdge  = new Bullet(-10, 100, 0);
+		Bullet westOnEdge   = new Bullet(-11, 100, 0);
 
-			Bullet northPreEdge = new Bullet(0, 32, 0);
-			Bullet northOnEdge  = new Bullet(0, -11, 0);
-			Bullet eastPreEdge  = new Bullet(ViewController.SCREEN_WIDTH + 10, 100, 0);
-			Bullet eastOnEdge   = new Bullet(ViewController.SCREEN_WIDTH + 11, 100, 0);
-			Bullet southPreEdge = new Bullet(0, ViewController.SCREEN_HEIGHT - (64 + 8 + 32), 0);   // 72 = tile + bullet's image height
-			Bullet southOnEdge  = new Bullet(0, ViewController.SCREEN_HEIGHT -71, 0);
-			Bullet westPreEdge  = new Bullet(-10, 100, 0);
-			Bullet westOnEdge   = new Bullet(-11, 100, 0);
+		activeBullets.add(northPreEdge);
+		activeBullets.add(northOnEdge);
+		activeBullets.add(eastPreEdge);
+		activeBullets.add(eastOnEdge);
+		activeBullets.add(southPreEdge);
+		activeBullets.add(southOnEdge);
+		activeBullets.add(westPreEdge);
+		activeBullets.add(westOnEdge);
 
-			activeBullets.add(northPreEdge);
-			activeBullets.add(northOnEdge);
-			activeBullets.add(eastPreEdge);
-			activeBullets.add(eastOnEdge);
-			activeBullets.add(southPreEdge);
-			activeBullets.add(southOnEdge);
-			activeBullets.add(westPreEdge);
-			activeBullets.add(westOnEdge);
+		levelModel.manageBullets(0);
 
-			levelModel.manageBullets(0);
+		assertTrue("northPreEdge should be active", activeBullets.contains(northPreEdge));
+		assertTrue("eastPreEdge should be active", activeBullets.contains(eastPreEdge));
+		assertTrue("southPreEdge should be active", activeBullets.contains(southPreEdge));
+		assertTrue("westPreEdge should be active", activeBullets.contains(westPreEdge));
 
-			assertTrue("northPreEdge should be active", activeBullets.contains(northPreEdge));
-			assertTrue("eastPreEdge should be active", activeBullets.contains(eastPreEdge));
-			assertTrue("southPreEdge should be active", activeBullets.contains(southPreEdge));
-			assertTrue("westPreEdge should be active", activeBullets.contains(westPreEdge));
+		assertTrue("northOnEdge should not be active", !activeBullets.contains(northOnEdge));
+		assertTrue("eastOnEdge should not be active", !activeBullets.contains(eastOnEdge));
+		assertTrue("southOnEdge should not be active", !activeBullets.contains(southOnEdge));
+		assertTrue("westOnEdge should not be active", !activeBullets.contains(westOnEdge));
 
-			assertTrue("northOnEdge should not be active", !activeBullets.contains(northOnEdge));
-			assertTrue("eastOnEdge should not be active", !activeBullets.contains(eastOnEdge));
-			assertTrue("southOnEdge should not be active", !activeBullets.contains(southOnEdge));
-			assertTrue("westOnEdge should not be active", !activeBullets.contains(westOnEdge));
+		Bullet killBullet = new Bullet(64, 128, 0);  // Corresponds to playerModel starting position
+		activeBullets.clear();
+		activeBullets.add(killBullet);
 
-			Bullet killBullet = new Bullet(64, 128, 0);  // Corresponds to playerModel starting position
-			activeBullets.clear();
-			activeBullets.add(killBullet);
-
-			levelModel.updateBackground(100);
-			int scrolledDistance = levelModel.getDistanceScrolled();
-			levelModel.manageBullets(0);
-			assertTrue("Player should of died, resetting scrolledDistance", scrolledDistance != levelModel.getDistanceScrolled());
+		levelModel.updateBackground(100);
+		int scrolledDistance = levelModel.getDistanceScrolled();
+		levelModel.manageBullets(0);
+		assertTrue("Player should of died, resetting scrolledDistance", scrolledDistance != levelModel.getDistanceScrolled());
 
 
-			activeBullets.clear();
-			Bullet checkUpdate = new Bullet( 0, 32, 2);  // direction = 2, to update xposition
-			activeBullets.add(checkUpdate);
+		activeBullets.clear();
+		Bullet checkUpdate = new Bullet( 0, 32, 2);  // direction = 2, to update xposition
+		activeBullets.add(checkUpdate);
 
-			double xPosPreUpdate = checkUpdate.xPos;
-			levelModel.manageBullets(10);
-			assertTrue("checkUpdate Bullet should be active", activeBullets.contains(checkUpdate));
-			assertTrue("Bullet Location failed to udpate", xPosPreUpdate != checkUpdate.xPos);
-		}
+		double xPosPreUpdate = checkUpdate.xPos;
+		levelModel.manageBullets(10);
+		assertTrue("checkUpdate Bullet should be active", activeBullets.contains(checkUpdate));
+		assertTrue("Bullet Location failed to udpate", xPosPreUpdate != checkUpdate.xPos);
 	}
 
 	@Test
@@ -208,7 +204,7 @@ public class TestLevelModel {
 	@Test
 	public void testCobaltBomb() {
 		boolean allEnemiesDead = true;
-		List<Bullet> activeBullets = levelModel.getActiveBullets();
+		ArrayList<Bullet> activeBullets = levelModel.getActiveBullets();
 		ArrayList<EnemyModel> activeEnemies = levelModel.getActiveEnemies();
 
 		Bullet bulletA = new Bullet(50, 50, 0);
@@ -216,30 +212,27 @@ public class TestLevelModel {
 		FlyerModel flyerA = new FlyerModel(20, 20);
 		FlyerModel flyerB = new FlyerModel(40, 40);
 
-		synchronized(activeBullets) {
+		activeBullets.clear();
+		activeEnemies.clear();
 
-			activeBullets.clear();
-			activeEnemies.clear();
+		activeBullets.add(bulletA);
+		activeBullets.add(bulletB);
+		activeEnemies.add(flyerA);
+		activeEnemies.add(flyerB);
 
-			activeBullets.add(bulletA);
-			activeBullets.add(bulletB);
-			activeEnemies.add(flyerA);
-			activeEnemies.add(flyerB);
-
-			levelModel.cobaltBomb();
-			for (int i = 0; i < activeEnemies.size(); i++) {
-				if (activeEnemies.get(i).isDead() != true)
-					allEnemiesDead = false;
-			}
-
-			assertTrue("All bullets should of be cleared", activeBullets.isEmpty());
-			assertTrue("Failed to kill all Enemies", allEnemiesDead);
+		levelModel.cobaltBomb();
+		for (int i = 0; i < activeEnemies.size(); i++) {
+			if (activeEnemies.get(i).isDead() != true)
+				allEnemiesDead = false;
 		}
+
+		assertTrue("All bullets should of be cleared", activeBullets.isEmpty());
+		assertTrue("Failed to kill all Enemies", allEnemiesDead);
 	}
 
 	@Test
 	public void testPlayerDeath() {
-		List<Bullet> activeBullets = levelModel.getActiveBullets();
+		ArrayList<Bullet> activeBullets = levelModel.getActiveBullets();
 		ArrayList<EnemyModel> activeEnemies = levelModel.getActiveEnemies();
 
 		Bullet bulletA = new Bullet(50, 50, 0);
@@ -247,22 +240,20 @@ public class TestLevelModel {
 		FlyerModel flyerA = new FlyerModel(20, 20);
 		FlyerModel flyerB = new FlyerModel(40, 40);
 
-		synchronized(activeBullets) {
-			activeBullets.clear();
-			activeEnemies.clear();
+		activeBullets.clear();
+		activeEnemies.clear();
 
-			activeBullets.add(bulletA);
-			activeBullets.add(bulletB);
-			activeEnemies.add(flyerA);
-			activeEnemies.add(flyerB);
+		activeBullets.add(bulletA);
+		activeBullets.add(bulletB);
+		activeEnemies.add(flyerA);
+		activeEnemies.add(flyerB);
 
-			levelModel.playerDeath(); // 3 - lives left
+		levelModel.playerDeath(); // 3 - lives left
 
-			assertTrue("ScrollDelta failed to reset", levelModel.getScrollDelta() == 0);
-			assertTrue("DistanceScrolled failed to reset", levelModel.getDistanceScrolled() == 0);
-			assertTrue("Failed to clear all enemies", activeEnemies.isEmpty());
-			assertTrue("Failed to clear all activeBullets", activeBullets.isEmpty());
-		}
+		assertTrue("ScrollDelta failed to reset", levelModel.getScrollDelta() == 0);
+		assertTrue("DistanceScrolled failed to reset", levelModel.getDistanceScrolled() == 0);
+		assertTrue("Failed to clear all enemies", activeEnemies.isEmpty());
+		assertTrue("Failed to clear all activeBullets", activeBullets.isEmpty());
 
 		levelModel.playerDeath(); //2 - lives left
 		levelModel.playerDeath(); //1 - lives left
