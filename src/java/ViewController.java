@@ -25,6 +25,9 @@ public class ViewController{
 	this.mainWindow.setVisible(true);
 
     this.modelController = m;
+
+    if (this.modelController != null)
+        this.modelController.setViewController(this);
     }
 
     public void render(){

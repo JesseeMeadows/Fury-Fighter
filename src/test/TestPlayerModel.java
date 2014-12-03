@@ -11,34 +11,25 @@ import static org.junit.Assert.*;
 import org.json.simple.JSONObject;
 
 public class TestPlayerModel {
+	private PlayerModel playerModel;
 
-	@Test
-	public void testPlayerModel()
-		{
-		LevelModel levelModel = new LevelModel(new ModelController(null));
-		TileMap tileMap = new TileMap(new JSONObject());
-
-		PlayerModel result = new PlayerModel(levelModel);
-		assertNotNull(result); // If something happends and it gets an execption then new will fail it this should be null.
+	@Before
+	public void initialize()
+	{
+		playerModel = new PlayerModel(new LevelModel(new ViewController(new ModelController(null)).getModelController()));
 	}
 
 	@Test
 	public void testDeath()
-		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
-
+	{
 		playerModel.death();
-
 	}
 
 
 	@Test
 	public void testGetBoundingBox()
-		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
-
+	{
 		Rectangle result = playerModel.getBoundingBox();
-
 
 		assertNotNull(result);
 	}
@@ -48,8 +39,7 @@ public class TestPlayerModel {
 
 	@Test
 	public void testGetBulletList()
-		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
+	{
 		assertNotNull(playerModel.getBulletList()); // This is an array lists and should never be null
 	}
 
@@ -98,9 +88,7 @@ public class TestPlayerModel {
 */
 	@Test
 	public void testGetPickup()
-		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
-
+	{
 		int	temp=playerModel.getRingLevel();
 		playerModel.getPickup("ring");
 		assertTrue((temp+1)==playerModel.getRingLevel()); // Since its suppposed to give you +1
@@ -125,11 +113,8 @@ public class TestPlayerModel {
 
 	@Test
 	public void testGetPlayerImage()
-		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
-
+	{
 		BufferedImage result = playerModel.getPlayerImage();
-
 
 		assertNotNull(result);
 	}
@@ -137,8 +122,7 @@ public class TestPlayerModel {
 
 	@Test
 	public void testGetVisibleModels()
-		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
+	{
 		HashMap<String, Model> result = playerModel.getVisibleModels();
 
 		assertNotNull(result);
@@ -147,32 +131,24 @@ public class TestPlayerModel {
 
 	@Test
 	public void testKeyDownResponse()
-		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
+	{
 		KeyEvent e = new KeyEvent(Box.createGlue(), 1, 1L, 1, 1);
 
 		playerModel.keyDownResponse(e);
-
-
 	}
 
 
 	@Test
 	public void testKeyUpResponse()
-		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
+	{
 		KeyEvent e = new KeyEvent(Box.createGlue(), 1, 1L, 1, 1);
 
 		playerModel.keyUpResponse(e);
-
-
 	}
 
 	@Test
 	public void testOnTiles()
-		{
-		PlayerModel playerModel = new PlayerModel(new LevelModel(new ModelController(null)));
-
+	{
 		ArrayList<Integer> result = playerModel.onTiles();
 
 		//assertTrue(result.size()>0);// If there is no tiles then something went wrong.
