@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 
 public class TestWeaponPickup {
-	
+
 	@Test
 	public void testWeaponPickup(){
 		int x = 1;
@@ -14,7 +14,7 @@ public class TestWeaponPickup {
 
 		assertNotNull(weaponPick);
 		assertNotNull(weaponPick.pickupImage);
-		assertEquals("ring", weaponPick.getType()); // default type in the class in the constructor
+		assertTrue(weaponPick.getType().matches("ring|missile|laser")); // default type in the class in the constructor
 		assertEquals(0, weaponPick.getWidth());
 		assertEquals(0, weaponPick.getHeight());
 	}
