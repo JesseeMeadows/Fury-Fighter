@@ -82,7 +82,7 @@ public class BossModel extends EnemyModel{
 			
 		}
 		else {
-			 b1=new Rectangle(this.xPos+80,this.yPos+68,this.xPos+88,this.yPos+24);
+			 b1=new Rectangle(this.xPos+80,this.yPos+13,this.xPos+88,this.yPos+24);
 			 b2=new Rectangle(this.xPos+82,this.yPos+41,this.xPos+92,this.yPos+51);
 			 b3=new Rectangle(this.xPos+80,this.yPos+68,this.xPos+88,this.yPos+80);
 		}
@@ -105,12 +105,12 @@ public class BossModel extends EnemyModel{
 		if (lowlife){
 			theta-=.07;
 			
-			yPos -= .09*dir*speed*ydir *dt;              // moves boss y only
+			yPos -= .01*dir + .09*dir*speed*ydir *dt;              // moves boss y only
 		}
 		else{
 			theta+=.035;
-			xPos -= .09*dir*speed*xdir* dt;              // moves boss x
-			yPos -= .09*dir*speed*ydir * dt;              // moves boss y
+			xPos -= .01*dir + .09*dir*speed*xdir* dt;              // moves boss x
+			yPos -= .01*dir + .09*dir*speed*ydir * dt;              // moves boss y
 		}
 
 		
