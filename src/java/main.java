@@ -7,7 +7,7 @@ public class main {
 		SoundManager sm = SoundManager.get();
         sm.addSound("intro", "assets/snd/introjingle.wav");
         sm.addSound("bullet", "assets/snd/bullet.wav");
-        sm.addSound("missle", "assets/snd/missle.wav");
+        sm.addSound("missile", "assets/snd/missile.wav");
         sm.addSound("laser", "assets/snd/laser.wav");
         sm.addSound("ring", "assets/snd/ring.wav");
         sm.addSound("interface", "assets/snd/interface.wav");

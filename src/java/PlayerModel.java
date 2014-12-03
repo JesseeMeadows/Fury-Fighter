@@ -42,7 +42,7 @@ public class PlayerModel extends Model implements InputResponder {
 	private int score;
 	private int lives;
 	private long invincibleStart;
-	private int missleLevel;
+	private int missileLevel;
 	private int laserLevel;
 	private int ringLevel;
 	private int fragmentCount;
@@ -53,7 +53,7 @@ public class PlayerModel extends Model implements InputResponder {
 	private float velocity;
 
 	public enum BulletType {
-		RING, MISSLE, LASER, BASIC
+		RING, MISSILE, LASER, BASIC
 	}
 
 	private enum TileCorner { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT };
@@ -81,7 +81,7 @@ public class PlayerModel extends Model implements InputResponder {
 		score = 0;
 		lives = 4;
 		invincibleStart = System.currentTimeMillis() / 1000;
-		missleLevel = 0;
+		missileLevel = 0;
 		ringLevel = 0;
 		laserLevel = 0;
 		fragmentCount = 0;
@@ -208,8 +208,8 @@ public class PlayerModel extends Model implements InputResponder {
 							SoundManager.get().playSound("pickup");
 							break;
 
-		case "missle":		missleLevel += 1;
-							bulletType = BulletType.MISSLE;
+		case "missile":		missileLevel += 1;
+							bulletType = BulletType.MISSILE;
 							SoundManager.get().playSound("pickup");
 							break;
 
@@ -253,8 +253,8 @@ public class PlayerModel extends Model implements InputResponder {
 								SoundManager.get().playSound("ring");
 								break;
 
-				case MISSLE:	fireMissle();
-								SoundManager.get().playSound("missle");
+				case MISSILE:	fireMissle();
+								SoundManager.get().playSound("missile");
 								break;
 
 				case LASER:		fireLaser();
@@ -444,7 +444,7 @@ public class PlayerModel extends Model implements InputResponder {
 
 						// flags bullet to be deleted if it contacts solid tile(besides ring bullets)
 						tile = tileMap.getTile(((tileCoordY) * tileMap.getTileMapWidth()) + (tileCoordX));
-                    
+
                         // Cheap fix here. getTiles returns -9999 if there is a problem.
 						if (tile!=-9999&&tile < 17 || tile > 23) {
 							int yPosInTile = y % tileHeight;
@@ -554,8 +554,8 @@ public class PlayerModel extends Model implements InputResponder {
 		yPos = 128;
 
 		// Sets level of weapon character was using at death to zero
-		if (bulletType == BulletType.MISSLE)
-			missleLevel = 0;
+		if (bulletType == BulletType.MISSILE)
+			missileLevel = 0;
 		else if (bulletType == BulletType.LASER)
 			laserLevel = 0;
 		else if (bulletType == BulletType.RING)
@@ -616,12 +616,12 @@ public class PlayerModel extends Model implements InputResponder {
 		bulletList.add(new MissleBullet(xPos + (spriteWidth / 2), yPos + (spriteHeight / 2), 2));
 
 		// 2 missiles => levels: 5-9 -- Fires: left, right
-		if (missleLevel >= 5) {
+		if (missileLevel >= 5) {
 			bulletList.add(new MissleBullet(xPos + (spriteWidth / 2), yPos + (spriteHeight / 2), 6));
 		}
 
 		// 4 missiles => levels: 10+ -- Fires: up, down, left, right
-		if (missleLevel >= 10) {
+		if (missileLevel >= 10) {
 			bulletList.add(new MissleBullet(xPos + (spriteWidth / 2), yPos + (spriteHeight / 2), 0));
 			bulletList.add(new MissleBullet(xPos + (spriteWidth / 2), yPos + (spriteHeight / 2), 4));
 		}
@@ -678,7 +678,7 @@ public class PlayerModel extends Model implements InputResponder {
 
 	public int getMissleLevel()
 	{
-		return missleLevel;
+		return missileLevel;
 	}
 
 	public int getRingLevel()

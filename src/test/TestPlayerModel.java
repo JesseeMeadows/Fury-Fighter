@@ -94,7 +94,7 @@ public class TestPlayerModel {
 		assertTrue((temp+1)==playerModel.getRingLevel()); // Since its suppposed to give you +1
 
 		temp=playerModel.getMissleLevel();
-		playerModel.getPickup("missle");
+		playerModel.getPickup("missile");
 		assertTrue((temp+1)==playerModel.getMissleLevel()); // Since its suppposed to give you +1
 
 
