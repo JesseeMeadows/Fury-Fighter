@@ -488,6 +488,7 @@ public class PlayerModel extends Model implements InputResponder {
 													bullet.yPos = bullet.yPos - (tileWidth - xPosInTile) - 1;
 												}
 												else {
+													bullet.xPos = 1;
 													bullet.xPos = bullet.xPos + yPosInTile + 1;
 													bullet.yPos = bullet.yPos - yPosInTile - 1;
 												}
