@@ -96,6 +96,7 @@
     <property name="property" value="property-value"/>
    </properties>
   </object>
+  <object type="defense-pod" x="691" y="191" width="32" height="32"/>
  </objectgroup>
  <layer name="collision" width="160" height="14">
   <data encoding="base64" compression="zlib">

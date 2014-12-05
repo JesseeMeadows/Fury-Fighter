@@ -55,7 +55,7 @@
                  "type":"boss",
                  "visible":true,
                  "width":32,
-                 "x":4200,
+                 "x":4551,
                  "y":202
                 }, 
                 {
@@ -97,10 +97,37 @@
                  "type":"enemy-flyer",
                  "visible":true,
                  "width":32,
+                 "x":1627,
+                 "y":83
+                }, 
+                {
+                 "height":32,
+                 "name":"",
+                 "properties":
+                    {
+                     "property":"property-value"
+                    },
+                 "rotation":0,
+                 "type":"enemy-flyer",
+                 "visible":true,
+                 "width":32,
                  "x":1628,
                  "y":350
                 }, 
-
+                {
+                 "height":32,
+                 "name":"",
+                 "properties":
+                    {
+                     "property":"property-value"
+                    },
+                 "rotation":0,
+                 "type":"enemy-flyer",
+                 "visible":true,
+                 "width":32,
+                 "x":2151,
+                 "y":67
+                }, 
                 {
                  "height":32,
                  "name":"",
@@ -210,7 +237,7 @@
                  "type":"enemy-flyer",
                  "visible":true,
                  "width":32,
-                 "x":3574,
+                 "x":3474,
                  "y":255
                 }, 
                 {
@@ -226,6 +253,48 @@
                  "width":32,
                  "x":3844,
                  "y":72
+                }, 
+                {
+                 "height":32,
+                 "name":"",
+                 "properties":
+                    {
+                     "property":"property-value"
+                    },
+                 "rotation":0,
+                 "type":"enemy-flyer",
+                 "visible":true,
+                 "width":32,
+                 "x":4347,
+                 "y":74
+                }, 
+                {
+                 "height":32,
+                 "name":"",
+                 "properties":
+                    {
+                     "property":"property-value"
+                    },
+                 "rotation":0,
+                 "type":"enemy-flyer",
+                 "visible":true,
+                 "width":32,
+                 "x":4343,
+                 "y":355
+                }, 
+                {
+                 "height":32,
+                 "name":"",
+                 "properties":
+                    {
+
+                    },
+                 "rotation":0,
+                 "type":"defense-pod",
+                 "visible":true,
+                 "width":32,
+                 "x":691,
+                 "y":191
                 }],
          "opacity":1,
          "type":"objectgroup",
