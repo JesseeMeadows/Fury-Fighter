@@ -15,13 +15,13 @@ public class TestEnemyView{
 	}
 	
 	@Test
-	public void testRender()
+	public void testRenderEnemyView()
 	{
 		enemyView.render(Graphics2DMock.getMockObject(),0,0);
 	}
 	
 	@Test
-	public void testGetVisibleViews()
+	public void testGetVisibleViewsEnemyView()
 	{
 		assertTrue(enemyView.getVisibleViews() instanceof HashMap);
 		assertEquals(0, enemyView.getVisibleViews().size());
