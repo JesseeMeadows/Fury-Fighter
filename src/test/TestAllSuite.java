@@ -23,6 +23,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestBullet.class,
 		TestEnemyModel.class,
 		TestTitleView.class,
+		TestPlayerView.class,
 		TestLevelModel.class,
 
 })
