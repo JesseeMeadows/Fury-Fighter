@@ -16,7 +16,10 @@ public class TestSplashView{
 	@Test
 	public void testRenderSplashView()
 	{
-		splashView.render(Graphics2DMock.getMockObject(),0,0);
+		if(Graphics2DMock.getMockObject() != null)
+		{
+			splashView.render(Graphics2DMock.getMockObject(),0,0);
+		}
 	}
 	
 	@Test
