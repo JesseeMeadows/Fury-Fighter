@@ -26,6 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestPlayerView.class,
 		TestLevelModel.class,
 		TestBossModel.class,
+		TestEnemyView.class,
 
 })
 public class TestAllSuite {}

@@ -1,7 +1,7 @@
-
 import static org.junit.Assert.*;
 import org.junit.*;
 
+//because SoundManager manages multiple MySound objects, if SoundManager works, so too should MySound
 public class TestSoundManager{
 	
 	@Before
