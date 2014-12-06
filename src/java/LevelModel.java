@@ -291,20 +291,21 @@ public class LevelModel extends Model{
 		Vector2 playerPos = new Vector2(playerModel.getXPos(), playerModel.getYPos());    // Obtains player's location to shoot towards that direction
 		Vector2 enemyPos = new Vector2(enemy.getXPos(), enemy.getYPos());				  // Obtains enemy position at time of shot
 		Vector2 dir = playerPos.sub(enemyPos);                                            // Creates a vector for bullets travel during its life span
-		activeBullets.add(new EnemyBullet(enemy.xPos + (enemy.width / 2), enemy.yPos + (enemy.height / 2), dir));
+		activeBullets.add(new EnemyBullet(enemy.xPos + (enemy.width >> 1), enemy.yPos + (enemy.height >> 1), dir));
 	}
 
 	/** Checks if any active bullets contact user and deletes those that are off-screen*/
 	public void manageBullets(float dt)
 	{
-		for (int i = 0; i < activeBullets.size(); i++) {
+		for (int i = 0; i < activeBullets.size(); i++) {			
+			Bullet bullet = activeBullets.get(i);
+			
+			bullet.update(dt);
+			wallCollision(bullet);
 			if (activeBullets.get(i).shouldDelete()) {
-				activeBullets.remove(i);
-				i--; 
+				activeBullets.remove(i);				i--; 
 			}
 			else {
-				Bullet bullet = activeBullets.get(i);
-				bullet.update(dt);
 				if (bullet.collidesWith(playerModel.getBoundingBox())) {
 					playerDeath();
 				}
@@ -312,7 +313,40 @@ public class LevelModel extends Model{
 			}
 		}
 	}
+	
+	public boolean wallCollision(Bullet bullet) {
+		Rectangle boundingBox = bullet.getBoundingBox();
+		int tileCoordX;
+		int tileCoordY;
+		int tile;
+		int tileWidth = tileMap.getTileWidth();
+		int tileHeight = tileMap.getTileHeight();
+		
 
+
+		/*
+		 * nested four loop only is grabbing the 4 corners of the
+		 * bullet's hit box and checking the type of tiles that they
+		 * contact. The current bullets range from 8x8 to 17x17, so they
+		 * all can contact the same range of tiles at any given time:
+		 * 1-4 A bullet expires on contact with a solid object(besides
+		 * ring bullets)
+		 */
+		
+		for (int y = bullet.yPos; y <= bullet.yPos + boundingBox.getHeight(); y += boundingBox.getHeight()) {
+		for (int x = bullet.xPos; x <= bullet.xPos + boundingBox.getWidth(); x += boundingBox.getWidth()) {
+				tileCoordX = (int)(x + distanceScrolled) / tileWidth;
+				tileCoordY = y / tileHeight;
+				
+				tile = tileMap.getTile(((tileCoordY) * tileMap.getTileMapWidth()) + (tileCoordX));
+				if (tile < 17 || 23 < tile) {
+					bullet.toBeDeleted = true;
+					return true;
+				}
+		}
+		}
+		return false;		
+	}
 	/** Updates all pickups locations on screen*/
 	public void updatePickups(float dt)
 	{

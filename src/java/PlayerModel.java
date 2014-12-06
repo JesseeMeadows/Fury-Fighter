@@ -422,126 +422,9 @@ public class PlayerModel extends Model implements InputResponder {
 				bullet.update(dt);
 				
 				if(!(bullet instanceof RingBullet)) {
-
-					Rectangle boundingBox = bullet.getBoundingBox();
-					int tileCoordX;
-					int tileCoordY;
-					int tile;
-					int tileWidth = tileMap.getTileWidth();
-					int tileHeight = tileMap.getTileHeight();
-					int maxDepth = 0;
-
-
-					/*
-					 * nested four loop only is grabbing the 4 corners of the
-					 * bullet's hit box and checking the type of tiles that they
-					 * contact. The current bullets range from 8x8 to 17x17, so they
-					 * all can contact the same range of tiles at any given time:
-					 * 1-4 A bullet expires on contact with a solid object(besides
-					 * ring bullets)
-					 */
-					
-					for (int y = bullet.yPos; y <= bullet.yPos + boundingBox.getHeight(); y += boundingBox.getHeight()) {
-					for (int x = bullet.xPos; x <= bullet.xPos + boundingBox.getWidth(); x += boundingBox.getWidth()) {
-							int cornerDepth = 0;
-							tileCoordX = (x + levelModel.getDistanceScrolled()) / tileWidth;
-							tileCoordY = y / tileHeight;
-
-
-							// flags bullet to be deleted if it contacts solid tile(besides ring bullets)
-							tile = tileMap.getTile(((tileCoordY) * tileMap.getTileMapWidth()) + (tileCoordX));
-	                       
-							if (tile < 17 || tile > 23) {
-								int yPosInTile = y % tileHeight;
-								int xPosInTile = (x + levelModel.getDistanceScrolled()) % tileWidth;								
-									bullet.toBeDeleted = true;
-
-									switch (bullet.getDirection()) {
-										case 0:		cornerDepth = tileHeight - yPosInTile;
-													break;
-
-										case 1:		if (xPosInTile < tileHeight - yPosInTile) {
-														cornerDepth = xPosInTile;
-													}
-													else {
-														cornerDepth = tileHeight - yPosInTile;
-													}
-													break;
-
-										case 2: 	cornerDepth = xPosInTile;
-													break;
-
-										case 3:		if (xPosInTile < yPosInTile) {
-														cornerDepth = xPosInTile;														
-													}
-													else {
-														cornerDepth = yPosInTile;
-													}
-													break;
-
-										case 4: 	cornerDepth = yPosInTile;
-													break;
-
-										case 5:		if (tileWidth - xPosInTile < yPosInTile) {
-														cornerDepth = tileWidth - xPosInTile;
-													}
-													else {
-														cornerDepth = yPosInTile;
-													}
-													break;
-
-										case 6:		cornerDepth = tileWidth - xPosInTile;
-													break;
-
-										case 7:		if (tileWidth - xPosInTile < tileHeight - yPosInTile) {
-														cornerDepth = tileWidth - xPosInTile;
-													}
-													else {
-														cornerDepth = tileHeight - yPosInTile;
-													}
-													break;
-									}
-									if (cornerDepth > maxDepth) {
-										maxDepth = cornerDepth;
-									}
-								}
-							}
-							}
-					
-							if (maxDepth > 0)
-								maxDepth++; // Depth + 1 places bullet just outside tile
-								switch (bullet.getDirection()) {
-									case 0:		bullet.yPos += maxDepth;
-												break;
-
-									case 1:		bullet.xPos -= maxDepth;
-												bullet.yPos += maxDepth;
-												break;
-
-									case 2: 	bullet.xPos -= maxDepth;
-												break;
-
-									case 3:		bullet.xPos -= maxDepth;
-												bullet.yPos -= maxDepth;
-												break;
-
-									case 4: 	bullet.yPos -= maxDepth;
-												break;
-
-									case 5:		bullet.xPos += maxDepth;
-												bullet.yPos -= maxDepth;
-												break;
-
-									case 6:		bullet.xPos += maxDepth;
-												break;
-
-									case 7:		bullet.xPos += maxDepth;
-												bullet.yPos += maxDepth;
-												break;
-							}						
-						}
-
-
+					if (computeCollision(bullet) == true) {
+						continue;
+					}
 					}
 				
 				/*
@@ -572,9 +455,131 @@ public class PlayerModel extends Model implements InputResponder {
 				}
 
 			}
+		}
 		
 		return 0;
 			
+	}
+	public boolean computeCollision (Bullet bullet) {
+		Rectangle boundingBox = bullet.getBoundingBox();
+		int tileCoordX;
+		int tileCoordY;
+		int tile;
+		int tileWidth = tileMap.getTileWidth();
+		int tileHeight = tileMap.getTileHeight();
+		int maxDepth = 0;
+
+
+		/*
+		 * nested four loop only is grabbing the 4 corners of the
+		 * bullet's hit box and checking the type of tiles that they
+		 * contact. The current bullets range from 8x8 to 17x17, so they
+		 * all can contact the same range of tiles at any given time:
+		 * 1-4 A bullet expires on contact with a solid object(besides
+		 * ring bullets)
+		 */
+		
+		for (int y = bullet.yPos; y <= bullet.yPos + boundingBox.getHeight(); y += boundingBox.getHeight()) {
+		for (int x = bullet.xPos; x <= bullet.xPos + boundingBox.getWidth(); x += boundingBox.getWidth()) {
+				int cornerDepth = 0;
+				tileCoordX = (x + levelModel.getDistanceScrolled()) / tileWidth;
+				tileCoordY = y / tileHeight;
+
+
+				// flags bullet to be deleted if it contacts solid tile(besides ring bullets)
+				tile = tileMap.getTile(((tileCoordY) * tileMap.getTileMapWidth()) + (tileCoordX));
+               
+				if (tile < 17 || tile > 23) {
+					int yPosInTile = y % tileHeight;
+					int xPosInTile = (x + levelModel.getDistanceScrolled()) % tileWidth;								
+						bullet.toBeDeleted = true;
+
+						switch (bullet.getDirection()) {
+							case 0:		cornerDepth = tileHeight - yPosInTile;
+										break;
+
+							case 1:		if (xPosInTile < tileHeight - yPosInTile) {
+											cornerDepth = xPosInTile;
+										}
+										else {
+											cornerDepth = tileHeight - yPosInTile;
+										}
+										break;
+
+							case 2: 	cornerDepth = xPosInTile;
+										break;
+
+							case 3:		if (xPosInTile < yPosInTile) {
+											cornerDepth = xPosInTile;														
+										}
+										else {
+											cornerDepth = yPosInTile;
+										}
+										break;
+
+							case 4: 	cornerDepth = yPosInTile;
+										break;
+
+							case 5:		if (tileWidth - xPosInTile < yPosInTile) {
+											cornerDepth = tileWidth - xPosInTile;
+										}
+										else {
+											cornerDepth = yPosInTile;
+										}
+										break;
+
+							case 6:		cornerDepth = tileWidth - xPosInTile;
+										break;
+
+							case 7:		if (tileWidth - xPosInTile < tileHeight - yPosInTile) {
+											cornerDepth = tileWidth - xPosInTile;
+										}
+										else {
+											cornerDepth = tileHeight - yPosInTile;
+										}
+										break;
+						}
+						if (cornerDepth > maxDepth) {
+							maxDepth = cornerDepth;
+						}
+					}
+				}
+				}
+		
+				if (maxDepth > 0) {
+					maxDepth++; // Depth + 1 places bullet just outside tile
+					switch (bullet.getDirection()) {
+						case 0:		bullet.yPos += maxDepth;
+									break;
+
+						case 1:		bullet.xPos -= maxDepth;
+									bullet.yPos += maxDepth;
+									break;
+
+						case 2: 	bullet.xPos -= maxDepth;
+									break;
+
+						case 3:		bullet.xPos -= maxDepth;
+									bullet.yPos -= maxDepth;
+									break;
+
+						case 4: 	bullet.yPos -= maxDepth;
+									break;
+
+						case 5:		bullet.xPos += maxDepth;
+									bullet.yPos -= maxDepth;
+									break;
+
+						case 6:		bullet.xPos += maxDepth;
+									break;
+
+						case 7:		bullet.xPos += maxDepth;
+									bullet.yPos += maxDepth;
+									break;
+				}
+					return true;
+				}
+				return false;
 	}
 
 	public void death()
