@@ -56,8 +56,6 @@ public class PlayerModel extends Model implements InputResponder {
 		RING, MISSILE, LASER, BASIC
 	}
 
-	private enum TileCorner { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT };
-
 	private BulletType bulletType;
 
 	private LevelModel levelModel;
@@ -350,7 +348,7 @@ public class PlayerModel extends Model implements InputResponder {
 				else if (tiles.get(i) < 17)
 					xPos = oldX + scrollDelta;
 
-				if ((xPos < 0) && ((System.currentTimeMillis() / 1000) - invincibleStart >= 10))
+				if ((xPos < 0) && blockedToRight())
 					levelModel.playerDeath();
 			}
 		}
@@ -461,6 +459,42 @@ public class PlayerModel extends Model implements InputResponder {
 		return 0;
 			
 	}
+	public boolean blockedToRight() {		
+		int tileCoordX;
+		int tileCoordY;		
+		int tileWidth = tileMap.getTileWidth();
+		int tileHeight = tileMap.getTileHeight();
+
+		int topRightX = xPos + spriteWidth;
+		int topRightY = yPos;
+		int bottomRightX = xPos + spriteWidth;
+		int bottomRightY = yPos + spriteHeight;
+		
+		// flags bullet to be deleted if it contacts solid tile(besides ring bullets)
+		int topRightTile = getTileNumber((topRightX + levelModel.getDistanceScrolled()) / tileWidth, topRightY / tileHeight);
+		int bottomRightTile = getTileNumber((bottomRightX + levelModel.getDistanceScrolled()) / tileWidth, bottomRightY / tileHeight);
+       
+		if (invalidTile(topRightTile) || invalidTile(bottomRightTile)) {
+			return true;
+		}
+		else  {
+			return false;
+		}		
+	}
+	
+	private int getTileNumber(int coordX, int coordY) {
+		return tileMap.getTile(((coordY) * tileMap.getTileMapWidth()) + (coordX));
+	}
+	
+	private boolean invalidTile(int tileNumber) {
+		if (tileNumber < 17 || tileNumber > 23) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+		
 	public boolean computeCollision (Bullet bullet) {
 		Rectangle boundingBox = bullet.getBoundingBox();
 		int tileCoordX;
