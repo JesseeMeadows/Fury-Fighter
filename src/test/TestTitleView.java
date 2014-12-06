@@ -45,11 +45,6 @@ public class TestTitleView
 		titleView.renderWithImages(Graphics2DMock.getMockObject(), rw, rh, mock(BufferedImage.class), mock(BufferedImage.class));
 	}
 
-	@Test(expected=NullPointerException.class)
-	public void testRenderNullPointerException()
-	{
-		titleView.renderWithImages(Graphics2DMock.getMockObject(), rw, rh, null, null);
-	}
 
 	@Test
 	public void testGetVisibleViews()

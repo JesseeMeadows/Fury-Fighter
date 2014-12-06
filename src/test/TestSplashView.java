@@ -10,16 +10,25 @@ public class TestSplashView{
 	@Before
 	public void instantiate()
 	{
-		splashView = new SplashView(new ViewController(new ModelController(null)));
+	
+		// Tons of objects need to be made to prevent null pointers....
+		ModelController modelController = new ModelController(null);
+		ViewController viewController = new ViewController(modelController);
+
+		viewController.setModelController(modelController);
+		modelController.setViewController(viewController);
+
+		//modelController.setMainModel(new LevelModel(modelController, "assets/test_level.json"));
+		//viewController.setMainView(new LevelView(viewController, "assets/test_level.png"));
+		 modelController.setMainModel(new SplashModel(modelController)); // Controller for Opening screen
+		 viewController.setMainView(new SplashView(viewController)); // View for opening screen
+		splashView = new SplashView(viewController);
 	}
 	
 	@Test
 	public void testRenderSplashView()
 	{
-		//For some reason a NullPointerException is raised when this commented test is run
-		//We worked for a while to try to figure out why, what we determined we couldn't fix
-		//Or, rather, weren't sure how to fix.
-		//splashView.render(Graphics2DMock.getMockObject(),0,0);
+		splashView.render(Graphics2DMock.getMockObject(),0,0);
 	}
 	
 	@Test
@@ -29,4 +38,4 @@ public class TestSplashView{
 		assertEquals(0, splashView.getVisibleViews().size());
 	}
 	
-}
+} 

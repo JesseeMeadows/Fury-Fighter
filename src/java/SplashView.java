@@ -16,9 +16,10 @@ public class SplashView extends View{
 		g2.setColor(Color.LIGHT_GRAY);
 		g2.setFont(new Font("Monospaced",Font.BOLD,16));
 		FontMetrics fm = g2.getFontMetrics();
-		g2.drawString("FURY FIGHTER",ViewController.SCREEN_WIDTH/2 - fm.stringWidth("FURY FIGHTER")/2,ViewController.SCREEN_HEIGHT/2 - fm.getHeight()/2);
-		g2.drawString("Released under the BSD license",ViewController.SCREEN_WIDTH/2 - fm.stringWidth("Released under the BSD license")/2,(ViewController.SCREEN_HEIGHT/2 - fm.getHeight()/2)+30);
-		
+		if (fm!=null){
+			g2.drawString("FURY FIGHTER",ViewController.SCREEN_WIDTH/2 - fm.stringWidth("FURY FIGHTER")/2,ViewController.SCREEN_HEIGHT/2 - fm.getHeight()/2);
+			g2.drawString("Released under the BSD license",ViewController.SCREEN_WIDTH/2 - fm.stringWidth("Released under the BSD license")/2,(ViewController.SCREEN_HEIGHT/2 - fm.getHeight()/2)+30);
+		}
 	
 	}
 	

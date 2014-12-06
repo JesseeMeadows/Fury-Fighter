@@ -18,8 +18,10 @@ public class GameOverView extends View{
 		
 		g2.setColor(Color.LIGHT_GRAY);
 		g2.setFont(new Font("Monospaced",Font.BOLD,24));
+		
 		FontMetrics fm = g2.getFontMetrics();
-		g2.drawString("GAME OVER",ViewController.SCREEN_WIDTH/2 - fm.stringWidth("GAME OVER")/2,ViewController.SCREEN_HEIGHT/2 - fm.getHeight()/2);
+		if (fm!=null)
+			g2.drawString("GAME OVER",ViewController.SCREEN_WIDTH/2 - fm.stringWidth("GAME OVER")/2,ViewController.SCREEN_HEIGHT/2 - fm.getHeight()/2);
 		g2.drawString("Continue",ViewController.SCREEN_WIDTH/2 ,300);
 		g2.drawString("Quit",ViewController.SCREEN_WIDTH/2,330);
 		BufferedImage img2 = this.gameOverModel.getCursor();
