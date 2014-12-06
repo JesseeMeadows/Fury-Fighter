@@ -37,17 +37,22 @@ public class ScoreTable
 
 	public static int scoreForKilled(EnemyModel enemy)
 	{
-		return 100;
+		return KILLED_REGULAR;
 	}
 
 	public static int scoreForPickup(Pickup pickup)
 	{
-		return 100;
+		if(pickup.getType().equals("fragment"))
+		{
+			return PICKUP_BOMB_FRAGMENT;
+		}
+		return PICKUP_REGULAR;
 	}
 
 	/* TODO: Figure out parameters for scoreForLevelBonus */
 	public static int scoreForLevelBonus()
 	{
-		return 10000;
+		//Difficulty select hasn't been implemented yet, so we opted to give "Normal Mode" points. 
+		return LEVEL_BONUS_ALBATROSS;
 	}
 }
