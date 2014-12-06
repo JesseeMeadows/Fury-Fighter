@@ -1,3 +1,4 @@
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -9,6 +10,8 @@ public class WeaponPickup extends Pickup{
 	private BufferedImage[] weaponFrames;
 	private MillisecTimer switchTimer;               // Used for rotation of 3 weapon pickups: rotates every second
 	private String[] types;
+	private int width;
+	private int height;
 
 	WeaponPickup(int x, int y){
 		super(x, y, "weapon");
@@ -16,6 +19,7 @@ public class WeaponPickup extends Pickup{
 		frame = Utils.randInt(0,2);              // ensures initial
 		weaponFrames = new BufferedImage[3];     // each weapon's pickup image(M/R/S)
 		switchTimer = new MillisecTimer();		 // Rotation timer
+		
 
 		try {
 			weaponFrames[0] = ImageIO.read(new File("assets/ringPickupImage.png"));
@@ -25,6 +29,8 @@ public class WeaponPickup extends Pickup{
 		catch (IOException e){
 			e.printStackTrace();
 		}
+		width = weaponFrames[0].getWidth();
+		height = weaponFrames[0].getHeight();
 
 		// 3 weapon types - indicator for pickup is String
 		types = new String[3];
@@ -47,6 +53,10 @@ public class WeaponPickup extends Pickup{
 		}
 		return 0;
 
+	}
+	
+	public Rectangle getBoundingBox() {
+		return new Rectangle(this.xPos, this.yPos, width, height);
 	}
 
 

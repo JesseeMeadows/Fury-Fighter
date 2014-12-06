@@ -38,6 +38,15 @@ public class Pickup{
 		}
 		
 	}
+	// Gets hit box of bullet
+	public Rectangle getBoundingBox() {
+		return new Rectangle(this.xPos, this.yPos, width, height);
+	}
+	
+	public boolean collidesWith(Rectangle boundingBox) {
+		Rectangle pickupBox = getBoundingBox();
+		return Utils.boxCollision(pickupBox, boundingBox);
+	}
 	
 	public void render(Graphics2D g2, float rw, float rh){
 		g2.drawImage(pickupImage, xPos, yPos,(int)rw * pickupImage.getWidth(),(int)rh * pickupImage.getHeight(),null);

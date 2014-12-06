@@ -381,7 +381,7 @@ public class PlayerModel extends Model implements InputResponder {
 		for (int xx = 0; xx < levelModel.getLevelPickups().size(); xx++) {
 			Pickup pk = levelModel.getLevelPickups().get(xx);
 
-			if (Utils.boxCollision(new Rectangle(xPos, yPos, spriteWidth, spriteHeight), new Rectangle(pk.getXPos(), pk.getYPos(), pk.getWidth(), pk.getHeight()))) {
+			if (Utils.boxCollision(new Rectangle(xPos, yPos, spriteWidth, spriteHeight), pk.getBoundingBox())) {
 				getPickup(pk.type);
 				score += ScoreTable.scoreForPickup(pk);
 				levelModel.getLevelPickups().remove(xx);
@@ -402,6 +402,7 @@ public class PlayerModel extends Model implements InputResponder {
 
 				if (Utils.boxCollision(em.getBoundingBox(), boundingBox)) {
 					em.kill();
+					SoundManager.get().playSound("kill");
 					score += ScoreTable.scoreForKilled(em);
 					Pickup[] p = em.getDrop();
 					if (p[0] != null) levelModel.getLevelPickups().add(p[0]);
