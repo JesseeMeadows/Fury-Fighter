@@ -21,10 +21,9 @@ public class TestPlayerView
 {
 	private PlayerView playerView;
 
-	@Parameter(value = 0)
+	@Parameter(value=0)
 	public float rw;
-
-	@Parameter(value = 1)
+	@Parameter(value=0)
 	public float rh;
 
 	@Before
