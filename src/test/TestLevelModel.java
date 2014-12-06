@@ -131,14 +131,14 @@ public class TestLevelModel {
 		ArrayList<Bullet> activeBullets = levelModel.getActiveBullets();
 		activeBullets.clear();
 
-		Bullet northPreEdge = new Bullet(0, 32, 0);
-		Bullet northOnEdge  = new Bullet(0, -11, 0);
-		Bullet eastPreEdge  = new Bullet(ViewController.SCREEN_WIDTH + 10, 100, 0);
-		Bullet eastOnEdge   = new Bullet(ViewController.SCREEN_WIDTH + 11, 100, 0);
-		Bullet southPreEdge = new Bullet(0, ViewController.SCREEN_HEIGHT - (64 + 8 + 32), 0);   // 72 = tile + bullet's image height
-		Bullet southOnEdge  = new Bullet(0, ViewController.SCREEN_HEIGHT -71, 0);
-		Bullet westPreEdge  = new Bullet(-10, 100, 0);
-		Bullet westOnEdge   = new Bullet(-11, 100, 0);
+		Bullet northPreEdge = new Bullet(0, 0, 0);
+		Bullet northOnEdge  = new Bullet(0, -1, 0);
+		Bullet eastPreEdge  = new Bullet(ViewController.SCREEN_WIDTH, 100, 0);
+		Bullet eastOnEdge   = new Bullet(ViewController.SCREEN_WIDTH + 1, 100, 0);
+		Bullet southPreEdge = new Bullet(0, ViewController.SCREEN_HEIGHT, 0);   // 72 = tile + bullet's image height
+		Bullet southOnEdge  = new Bullet(0, ViewController.SCREEN_HEIGHT + 1, 0);
+		Bullet westPreEdge  = new Bullet(0, 100, 0);
+		Bullet westOnEdge   = new Bullet(-1, 100, 0);
 
 		activeBullets.add(northPreEdge);
 		activeBullets.add(northOnEdge);
@@ -226,7 +226,7 @@ public class TestLevelModel {
 				allEnemiesDead = false;
 		}
 
-		assertTrue("All bullets should of be cleared", activeBullets.isEmpty());
+		assertTrue("All bullets should be cleared", activeBullets.isEmpty());
 		assertTrue("Failed to kill all Enemies", allEnemiesDead);
 	}
 
@@ -267,7 +267,26 @@ public class TestLevelModel {
 	@Test
 	public void testDeathTimerDt() {
 		assertTrue("DeathTimer should be null since player hasn't died", levelModel.getDeathTimerDt() == 0.0f);
+		
+		levelModel.playerDeath();
+		try {
+			Thread.sleep(1);
+		} catch(InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
+		assertTrue("DeathTimer should be initialized size player died", levelModel.getDeathTimerDt() > 0);
 	}
+	
+	@Test
+	public void testCreateEnemyBullet() {
+		int beforeBulletCreation = levelModel.getActiveBullets().size();
+		EnemyModel dummyEnemy = new FlyerModel(50,50);
+		levelModel.createEnemyBullet(dummyEnemy);
+		
+		assertTrue("Active bullet list should have increased by one", 
+					levelModel.getActiveBullets().size() == beforeBulletCreation + 1);
+	}
+	
 
 }
 

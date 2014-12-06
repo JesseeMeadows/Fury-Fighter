@@ -78,7 +78,7 @@ public class BossModel extends EnemyModel{
 		if (direction==false){
 			b1=new Rectangle(this.xPos+6,this.yPos+13,this.xPos+16,this.yPos+24);
 			b2=new Rectangle(this.xPos+3,this.yPos+41,this.xPos+14,this.yPos+51);
-			b2=new Rectangle(this.xPos+6,this.yPos+68,this.xPos+16,this.yPos+80);
+			b3=new Rectangle(this.xPos+6,this.yPos+68,this.xPos+16,this.yPos+80);
 			
 		}
 		else {
@@ -87,8 +87,8 @@ public class BossModel extends EnemyModel{
 			 b3=new Rectangle(this.xPos+80,this.yPos+68,this.xPos+88,this.yPos+80);
 		}
 		
-		if (bullet.collidesWith(b1)||bullet.collidesWith(b1)||bullet.collidesWith(b1)){
-			health--;
+		if (bullet.collidesWith(b1)||bullet.collidesWith(b2)||bullet.collidesWith(b3)){
+			health -= bullet.power;
 			return true;
 		}
 	return false;
@@ -109,7 +109,7 @@ public class BossModel extends EnemyModel{
 		}
 		else{
 			theta+=.035;
-			xPos -= .01*dir + .09*dir*speed*xdir* dt;              // moves boss x
+			xPos -= .01*dir + .09*dir*speed*xdir* dt;               // moves boss x
 			yPos -= .01*dir + .09*dir*speed*ydir * dt;              // moves boss y
 		}
 
