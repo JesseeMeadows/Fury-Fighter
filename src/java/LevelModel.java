@@ -298,14 +298,14 @@ public class LevelModel extends Model{
 	public void manageBullets(float dt)
 	{
 		for (int i = 0; i < activeBullets.size(); i++) {			
-			Bullet bullet = activeBullets.get(i);
+			Bullet bullet = activeBullets.get(i);		
 			
-			bullet.update(dt);
-			wallCollision(bullet);
-			if (activeBullets.get(i).shouldDelete()) {
-				activeBullets.remove(i);				i--; 
+			if (bullet.shouldDelete() || wallCollision(bullet)) {
+				activeBullets.remove(i);				
+				i--; 
 			}
 			else {
+				bullet.update(dt);
 				if (bullet.collidesWith(playerModel.getBoundingBox())) {
 					playerDeath();
 				}
@@ -315,9 +315,7 @@ public class LevelModel extends Model{
 	}
 	
 	public boolean wallCollision(Bullet bullet) {
-		Rectangle boundingBox = bullet.getBoundingBox();
-		int tileCoordX;
-		int tileCoordY;
+		Rectangle boundingBox = bullet.getBoundingBox();		
 		int tile;
 		int tileWidth = tileMap.getTileWidth();
 		int tileHeight = tileMap.getTileHeight();
@@ -331,16 +329,15 @@ public class LevelModel extends Model{
 		 * all can contact the same range of tiles at any given time:
 		 * 1-4 A bullet expires on contact with a solid object(besides
 		 * ring bullets)
-		 */
+		 */	
 		
 		for (int y = bullet.yPos; y <= bullet.yPos + boundingBox.getHeight(); y += boundingBox.getHeight()) {
 		for (int x = bullet.xPos; x <= bullet.xPos + boundingBox.getWidth(); x += boundingBox.getWidth()) {
-				tileCoordX = (int)(x + distanceScrolled) / tileWidth;
-				tileCoordY = y / tileHeight;
+				int tileCoordX = (int)(x + distanceScrolled) / tileWidth;
+				int tileCoordY = y / tileHeight;				
 				
 				tile = tileMap.getTile(((tileCoordY) * tileMap.getTileMapWidth()) + (tileCoordX));
 				if (tile < 17 || 23 < tile) {
-					bullet.toBeDeleted = true;
 					return true;
 				}
 		}

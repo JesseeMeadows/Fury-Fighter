@@ -130,15 +130,20 @@ public class TestLevelModel {
 	public void testManageBullets() {
 		ArrayList<Bullet> activeBullets = levelModel.getActiveBullets();
 		activeBullets.clear();
+		int tileHeight = levelModel.getTileMap().getTileHeight();
+		int tileWidth = levelModel.getTileMap().getTileWidth();
+		Bullet metrics = new Bullet(0, 0, 0);
+		int bulletWidth = metrics.bulletImage.getWidth();
+		int bulletHeight = metrics.bulletImage.getHeight();
 
-		Bullet northPreEdge = new Bullet(0, 0, 0);
-		Bullet northOnEdge  = new Bullet(0, -1, 0);
-		Bullet eastPreEdge  = new Bullet(ViewController.SCREEN_WIDTH, 100, 0);
-		Bullet eastOnEdge   = new Bullet(ViewController.SCREEN_WIDTH + 1, 100, 0);
-		Bullet southPreEdge = new Bullet(0, ViewController.SCREEN_HEIGHT, 0);   // 72 = tile + bullet's image height
-		Bullet southOnEdge  = new Bullet(0, ViewController.SCREEN_HEIGHT + 1, 0);
-		Bullet westPreEdge  = new Bullet(0, 100, 0);
-		Bullet westOnEdge   = new Bullet(-1, 100, 0);
+		Bullet northPreEdge = new Bullet(0, tileWidth, 0);
+		Bullet northOnEdge  = new Bullet(0, tileWidth - 1, 0);
+		Bullet eastPreEdge  = new Bullet(ViewController.SCREEN_WIDTH - bulletWidth - 1, 33, 2);
+		Bullet eastOnEdge   = new Bullet(ViewController.SCREEN_WIDTH - bulletWidth, 33, 2);
+		Bullet southPreEdge = new Bullet(0, ViewController.SCREEN_HEIGHT - (3 * tileHeight) - bulletHeight - 1, 4);  
+		Bullet southOnEdge  = new Bullet(0, ViewController.SCREEN_HEIGHT - (3 * tileHeight) - bulletHeight, 4);
+		Bullet westPreEdge  = new Bullet(0, 33, 6);
+		Bullet westOnEdge   = new Bullet(-1, 33, 6);
 
 		activeBullets.add(northPreEdge);
 		activeBullets.add(northOnEdge);

@@ -14,6 +14,8 @@ public class Bullet {
 	protected int yPos; // y-Coordinate of bullet
 	private int direction;
 	private int millisecDelay;
+	private int height;
+	private int width;
 
 
 	protected int power; // bullet's damage
@@ -38,6 +40,8 @@ public class Bullet {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+		height = bulletImage.getHeight();
+		width = bulletImage.getWidth();
 	}
 
 	// Checks if bullets contacts passed in object's hitbox
@@ -89,7 +93,7 @@ public class Bullet {
 	// returns true if bullet of off screen
 	/* TODO: I don't trust the screen edge logic in this method, but its the best we have with no documentation. */
 	public boolean shouldDelete() {
-		if (xPos > ViewController.SCREEN_WIDTH || xPos < 0 || yPos > ViewController.SCREEN_HEIGHT || yPos < 0) {
+		if (xPos + width >= ViewController.SCREEN_WIDTH  || xPos < 0 || yPos + height >= ViewController.SCREEN_HEIGHT - (64) || yPos < 0) {
 			return true;
 		}
 		else if (toBeDeleted == true) {
